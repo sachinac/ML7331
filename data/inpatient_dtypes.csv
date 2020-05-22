@@ -1,0 +1,31 @@
+#,Field Name,Field Type,Description,Field Type
+1,BeneID                 ,object ,Unique Beneficiary ID,Categorical
+2,ClaimID                ,object ,Claim ID,Categorical
+3,ClaimStartDt           ,object ,Claim Start Date,Numerical
+4,ClaimEndDt             ,object ,Claim End Date,Numerical
+5,Provider               ,object ,Provider ID,Categorical
+6,InscClaimAmtReimbursed ,int64  ,Reimbursed Claim amount,Numerical
+7,AttendingPhysician     ,object ,Attending Physician Provider ID,Categorical
+8,OperatingPhysician     ,object ,Operating Physician Provider ID,Categorical
+9,OtherPhysician         ,object ,Other Physician Provider ID,Categorical
+10,AdmissionDt            ,object ,Admission Date,Numerical
+11,ClmAdmitDiagnosisCode  ,object ,Admitting Diagnosis Codes,Categorical
+12,DeductibleAmtPaid      ,float64,Deductible amount Paid,Numerical
+13,DischargeDt            ,object ,Discharge Date,Numerical
+14,DiagnosisGroupCode     ,object ,Diagnosis Group Code,Categorical
+15,ClmDiagnosisCode_1     ,object ,Diagnosis Code 1,Categorical
+16,ClmDiagnosisCode_2     ,object ,Diagnosis Code 2,Categorical
+17,ClmDiagnosisCode_3     ,object ,Diagnosis Code 3,Categorical
+18,ClmDiagnosisCode_4     ,object ,Diagnosis Code 4,Categorical
+19,ClmDiagnosisCode_5     ,object ,Diagnosis Code 5,Categorical
+20,ClmDiagnosisCode_6     ,object ,Diagnosis Code 6,Categorical
+21,ClmDiagnosisCode_7     ,object ,Diagnosis Code 7,Categorical
+22,ClmDiagnosisCode_8     ,object ,Diagnosis Code 8,Categorical
+23,ClmDiagnosisCode_9     ,object ,Diagnosis Code 9,Categorical
+24,ClmDiagnosisCode_10    ,object ,Diagnosis Code 10,Categorical
+25,ClmProcedureCode_1     ,float64,ClmProcedureCode 1     ,Categorical
+26,ClmProcedureCode_2     ,float64,ClmProcedureCode 2,Categorical
+27,ClmProcedureCode_3     ,float64,ClmProcedureCode 3     ,Categorical
+28,ClmProcedureCode_4     ,float64,ClmProcedureCode 4     ,Categorical
+29,ClmProcedureCode_5     ,float64,ClmProcedureCode 5     ,Categorical
+30,ClmProcedureCode_6     ,float64,ClmProcedureCode 6,Categorical

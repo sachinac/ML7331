@@ -1,4 +1,4 @@
-#,Field Name,Field Type,Description,Field Type
+#,Field Name,Field Type,Description,Intended Field Type
 1,BeneID                 ,object ,Unique Beneficiary ID,Categorical
 2,ClaimID                ,object ,Claim ID,Categorical
 3,ClaimStartDt           ,object ,Claim Start Date,Numerical

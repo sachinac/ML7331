@@ -1,0 +1,26 @@
+#,Field Name,Datatype,Description,Intended Field Type
+1,BeneID                          ,object,Beneficary ID,Categorical
+2,DOB                             ,object,Date of Birth,Numerical
+3,DOD                             ,object,Date of Death,Numerical
+4,Gender                          ,int64 ,Gender,Categorical
+5,Race                            ,int64 ,Race,Categorical
+6,RenalDiseaseIndicator           ,object,Renal Disease Indicator,Categorical
+7,State                           ,int64 ,State,Categorical
+8,County                          ,int64 ,County,Categorical
+9,NoOfMonths_PartACov             ,int64 ,Part A Coverage months,Categorical
+10,NoOfMonths_PartBCov             ,int64 ,Part B Coverage months,Categorical
+11,ChronicCond_Alzheimer           ,int64 ,Chronic Condition Alzheimer Indicator,Categorical
+12,ChronicCond_Heartfailure        ,int64 ,Chronic Condition Heart failure Indicator,Categorical
+13,ChronicCond_KidneyDisease       ,int64 ,Chronic Condition Kidney Disease Indicator,Categorical
+14,ChronicCond_Cancer              ,int64 ,Chronic Condition Cancer Indicator,Categorical
+15,ChronicCond_ObstrPulmonary      ,int64 ,Chronic Condition ObstrPulmonary Indicator,Categorical
+16,ChronicCond_Depression          ,int64 ,Chronic Condition Depression Indicator,Categorical
+17,ChronicCond_Diabetes            ,int64 ,Chronic Condition Diabetetes Indicator,Categorical
+18,ChronicCond_IschemicHeart       ,int64 ,Chronic Condition ChemicHeart Indicator,Categorical
+19,ChronicCond_Osteoporasis        ,int64 ,Chronic Condition Osteoporarsis Indicator,Categorical
+20,ChronicCond_rheumatoidarthritis ,int64 ,Chronic Condition rheumatoidarthritis Indicator,Categorical
+21,ChronicCond_stroke              ,int64 ,Chronic Condition Stroke Indicator,Categorical
+22,IPAnnualReimbursementAmt        ,int64 ,Inpatient Annual Reimbursement Amount,Numerical
+23,IPAnnualDeductibleAmt           ,int64 ,Inpatient Annual Deductible Amount,Numerical
+24,OPAnnualReimbursementAmt        ,int64 ,Outpatient Annual Reimbursement Amount,Numerical
+35,OPAnnualDeductibleAmt           ,int64 ,Outpatient Annual Deductible Amount,Numerical

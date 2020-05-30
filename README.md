@@ -2,7 +2,7 @@ This is Readme for Machine Learning
 
 <b>Archive</b>
 
-All individual work moved to archive folder
+Nothing has been deleted from the top folder. All files have been moved to archive folder
 
 
 <b>labs_final</b>

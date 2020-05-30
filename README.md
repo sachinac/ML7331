@@ -9,4 +9,8 @@ Nothing has been deleted from the top folder. All files have been moved to archi
 
 Notebooks delivered for grading.
 
+<b>data</b>
+
+Nothing deleted from this folder. It contains all dataset files.
+
 

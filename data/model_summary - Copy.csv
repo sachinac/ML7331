@@ -1,0 +1,12 @@
+Dense/Sparse,Model,Full/Subset data,Run Time(seconds),Cross Val Run Time,Accuracy,Precision,Recall,F1Score
+Dense Matrix,Logistic,Full,848.11,288+,86.42,89.15,86.86,87.99
+Dense Matrix,Logistic,By Feature selection,4.63,-,84.18,96.35,75.24,84.5
+Dense Matrix,SVM-Linear,Full,377.71,-,84.12,96.19,75.26,84.45
+Dense Matrix,SVM-SGD,Full,499.95,-,88.15,93.82,84.9,89.14
+Dense Matrix,SVM-SGD,By Feature selection,2.22,-,83.96,96.08,75.07,84.28
+//////////////,//////////////,//////////////,//////////////,//////////////,//////////////,//////////////,,//////////////
+Sparse Matrix,Model,Full/Subset data,Run Time(seconds),Cross Val Run Time,Accuracy,Precision,Recall,F1Score
+Sparse Matrix,Logistic,Full,1.09,310,86.3,88.4,87.6,88
+Sparse Matrix,Logistic-SGD,Full,0.16,759,60.9,60,94.8,73.5
+Sparse Matrix,SVM-Linear,Full,371.8,2528,79.8,81.3,84,82.6
+Sparse Matrix,SVM-Linear,By Feature selection,280,-,88.2,93.1,85.7,89.3

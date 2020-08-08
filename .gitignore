@@ -1,3 +1,4 @@
 .vscode/settings.json
 data/movies/
 .ipynb_checkpoints/
+models/

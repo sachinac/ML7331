@@ -140,7 +140,7 @@ preds = predict(CoroVar,n.ahead = lenPos)
 ASE = mean((texasPos - preds$fcst$y1[,1])^2)
 ASE
 
-MAE = sqrt(ASE)
+MAE = mean(abs(texasPos - preds$fcst$y1[,1]))
 
 VAR_DF = data.frame(Model = 'VAR', Mean_ABS_Error = MAE, Mean_Square_Error = ASE)
 
@@ -165,7 +165,7 @@ fore.mlp = forecast(fit.mlp, h = lenPos,xreg = foreAllDF)
 ASE = mean((texasPos - fore.mlp$mean)^2)
 ASE
 
-MAE = sqrt(ASE)
+MAE = mean(abs(texasPos - fore.mlp$mean))
 MAE
 MLP_DF = data.frame(Model = 'MLP', Mean_ABS_Error = MAE, Mean_Square_Error = ASE)
 
@@ -223,7 +223,7 @@ ASE = mean((texasPos - predsFinal)^2)
 ASE
 
 
-MAE = sqrt(ASE)
+MAE = mean(abs(texasPos - predsFinal))
 
 MLR_DF = data.frame(Model = 'MLR', Mean_ABS_Error = MAE, Mean_Square_Error = ASE)
 

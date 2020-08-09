@@ -1,0 +1,232 @@
+---
+title: "Corona Extra Credit"
+author: "Ikenna Nwaogu"
+date: "8/9/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r}
+  
+library(tswge)
+library(orcutt)
+library(vars)
+library(nnfor)
+library(forecast)
+library(dplyr)
+
+uri.data = 'https://covidtracking.com/api/v1/states/tx/daily.csv'
+texas = read.csv(uri.data, header = T)
+
+#####################################################
+usCovidClean <- texas %>% replace(is.na(.), 0)
+DataUsing <- usCovidClean %>% dplyr::select(date,'positiveIncrease')
+
+# select start date 
+DataUsing<- DataUsing %>% filter(date > 20200706)   
+DataUsing<- as.data.frame(DataUsing)
+DataUsing$date <- as.factor(DataUsing$date)
+
+#lenPos = length(DataUsing$positiveIncrease)
+#texasPos = rev(DataUsing$positiveIncrease)
+### Ignore these data point these are ones gotten directly from the covid data tracking website.
+
+
+############################## Class Data ###################################
+Class = read.csv("~/Documents/datascience/DS7331/CoronaCurves-master/Corona_Curves_TX_NY_NJ.csv", header = TRUE)
+#Class <- Class[rev(order(as.Date(Class$Date, format="%m/%d/%Y"))),]
+#Class %>% select(State,Date,Daily_New_Cases)
+
+nj = filter(Class, State == "NJ")
+ny = filter(Class, State == "NY")
+tx = filter(Class, State == "TX")
+tx$Daily_New_Cases
+
+#NewClass <- rbind(ny, nj, tx)
+Class <- rbind(nj, ny, tx)
+
+
+####### Future texas Data  ########
+FutureData = read.csv("~/Documents/datascience/DS7331/CoronaCurves-master/Corona_MAE.csv", header = TRUE)
+texasPos = FutureData$TX.New.Cases
+lenPos = length(texasPos)
+########################################### Combine latest Texas data ##########################
+
+onlineData = as.data.frame(texasPos)
+classData <- Class$Daily_New_Cases
+
+#names(classData)[1] <- "Daily_New_Cases"
+names(onlineData)[1] <- "Daily_New_Cases"
+
+foreAll = rbind(classData,onlineData)
+
+
+```
+
+## Corona Realization
+
+```{r Realization, echo=FALSE}
+plotts.sample.wge(Class$Daily_New_Cases)
+```
+
+## Predict Class explanatory variables 
+### Pct_change Forecast
+```{r}
+plotts.sample.wge(Class$Pct_Change)
+
+aic = aic.wge(Class$Pct_Change,p = 0:10, q = 0:2, type = 'bic')
+Pct_Change = est.arma.wge(Class$Pct_Change,p = aic$p, q = aic$q)
+acf(Pct_Change$res)
+ljung.wge(Pct_Change$res, p = aic$p, q = aic$q)
+ljung.wge(Pct_Change$res, p = aic$p, q = aic$q, K = 48)
+
+Pct_ChangeFore = fore.arma.wge(Class$Pct_Change, phi = Pct_Change$phi, theta = Pct_Change$theta, n.ahead = lenPos)
+
+Pct_ChangeFore = Pct_ChangeFore$f
+```
+
+### Curve Day forecast
+```{r}
+plotts.sample.wge(Class$Curve_Day)
+aic = aic.wge(Class$Curve_Day,p = 0:10, q = 0:2, type = 'bic')
+Curve_Day = est.arma.wge(Class$Curve_Day,p = aic$p, q = aic$q)
+acf(Curve_Day$res)
+ljung.wge(Curve_Day$res, p = aic$p, q = aic$q)
+ljung.wge(Curve_Day$res, p = aic$p, q = aic$q, K = 48)
+
+Curve_DayFore = fore.arma.wge(Class$Curve_Day, phi = Curve_Day$phi, theta = Curve_Day$theta, n.ahead = lenPos)
+
+Curve_DayFore = Curve_DayFore$f
+
+#### Actual Curve day should be used since we know it would be continuation of the last curve day from previous data
+
+Curve_DayFore = FutureData$Curve_Day
+```
+
+### Pop_ct Forecast
+```{r}
+plotts.sample.wge(Class$Pop_Pct)
+aic = aic.wge(Class$Pop_Pct,p = 0:10, q = 0:2, type = 'bic')
+Pop_Pct = est.arma.wge(Class$Pop_Pct,p = aic$p, q = aic$q)
+acf(Pop_Pct$res)
+ljung.wge(Pop_Pct$res, p = aic$p, q = aic$q)
+ljung.wge(Pop_Pct$res, p = aic$p, q = aic$q, K = 48)
+
+Pop_PctFore = fore.arma.wge(Class$Pop_Pct, phi = Pop_Pct$phi, theta = Pop_Pct$theta, n.ahead = lenPos)
+
+Pop_PctFore = Pop_PctFore$f
+
+```
+
+## Multivariate Models
+
+### VAR Model
+```{r}
+count = length(Class$Daily_New_Cases)
+#CoroVar = VAR(cbind(Class$Daily_New_Cases,Class$Three_Day_Avg_Pct_Chg,Class$Curve_Day, Class$Pop_Pct, Class$Pct_Change), type = "both", lag.max = 10)
+CoroVar = VAR(cbind(Class$Daily_New_Cases, Class$Pct_Change,Class$Curve_Day), type = "both", lag.max = 10)
+
+preds = predict(CoroVar,n.ahead = lenPos)
+
+ASE = mean((texasPos - preds$fcst$y1[,1])^2)
+ASE
+
+MAE = sqrt(ASE)
+
+VAR_DF = data.frame(Model = 'VAR', Mean_ABS_Error = MAE, Mean_Square_Error = ASE)
+
+plot(preds)
+
+```
+
+### MLP Model
+```{r}
+CoroDF = data.frame(popct = Class$Pop_Pct,pctchange =Class$Pct_Change, cv = Class$Curve_Day)
+
+foreDF = data.frame(cv = Curve_DayFore, popct = Pop_PctFore,pctchange = Pct_ChangeFore)
+
+foreAllDF = rbind(CoroDF,foreDF)
+
+CoroDF = data.frame(popct = ts(Class$Pop_Pct),pctchange = ts(Class$Pct_Change), cv = ts(Class$Curve_Day))
+
+set.seed(6)
+fit.mlp = mlp(ts(Class$Daily_New_Cases),reps = 10,comb = "mean",xreg = CoroDF)
+fit.mlp
+fore.mlp = forecast(fit.mlp, h = lenPos,xreg = foreAllDF)
+ASE = mean((texasPos - fore.mlp$mean)^2)
+ASE
+
+MAE = sqrt(ASE)
+MAE
+MLP_DF = data.frame(Model = 'MLP', Mean_ABS_Error = MAE, Mean_Square_Error = ASE)
+
+plot(fit.mlp)
+
+```
+### MLR Model
+```{r}
+ccf(Class$Pop_Pct,Class$Daily_New_Cases)
+ccf(Class$Pct_Change,Class$Daily_New_Cases)
+ccf(Class$Three_Day_Avg_Pct_Chg,Class$Daily_New_Cases)
+ccf(Class$Curve_Day,Class$Daily_New_Cases)
+Class$lagCurve = dplyr::lag(Class$Curve_Day,3)
+
+ccf(Class$Pct_Change_M1 ,Class$Daily_New_Cases)
+ccf(Class$Pct_Change_M2,Class$Daily_New_Cases)
+ccf(Class$Pct_Change_M3,Class$Daily_New_Cases)
+ccf(Class$Pct_Change_M4,Class$Daily_New_Cases)
+ccf(Class$Pct_Change_M5,Class$Daily_New_Cases)
+ccf(Class$Pct_Change_M6,Class$Daily_New_Cases)
+ccf(Class$Pct_Change_M7,Class$Daily_New_Cases)
+ccf(Class$Three_Day_Avg_Pct_Chg,Class$Daily_New_Cases)
+ccf(Class$Seven_Day_Avg_Pct_Chg,Class$Daily_New_Cases)
+ccf(Class$Pop_Pct_M1 ,Class$Daily_New_Cases)
+ccf(Class$Pop_Pct_M2 ,Class$Daily_New_Cases)
+ccf(Class$Pop_Pct_M3 ,Class$Daily_New_Cases)
+ccf(Class$Pop_Pct_M4 ,Class$Daily_New_Cases)
+ccf(Class$Pop_Pct_M5 ,Class$Daily_New_Cases)
+ccf(Class$Pop_Pct_M6 ,Class$Daily_New_Cases)
+ccf(Class$Pop_Pct_M7 ,Class$Daily_New_Cases)
+ccf(Class$Three_Day_Avg_Pop_Pct,Class$Daily_New_Cases)
+ccf(Class$Seven_Day_Avg_Pop_Pct,Class$Daily_New_Cases)
+
+
+######################### Begin ##########################
+
+Corofit1 = lm(Daily_New_Cases~ lagCurve + Pop_Pct + Pct_Change, data = Class)
+phi = aic.wge(Corofit1$residuals)
+
+acf(Corofit1$residuals)
+ljung.wge(Corofit1$residuals) # pval = .066
+ljung.wge(Corofit1$residuals, K = 48) # pval = .0058
+
+resids = fore.arma.wge(Corofit1$residuals,phi = phi$phi,n.ahead = lenPos)
+
+foreDF = data.frame(lagCurve = Curve_DayFore, Pop_Pct = Pop_PctFore,Pct_Change = Pct_ChangeFore)
+#predict trend manually
+preds = predict(Corofit1, newdata = foreDF)
+
+predsFinal = preds + resids$f
+
+predsFinal <- as.numeric(predsFinal)
+
+ASE = mean((texasPos - predsFinal)^2)
+ASE
+
+
+MAE = sqrt(ASE)
+
+MLR_DF = data.frame(Model = 'MLR', Mean_ABS_Error = MAE, Mean_Square_Error = ASE)
+
+df = rbind(VAR_DF,MLP_DF,MLR_DF)
+df
+```

@@ -76,7 +76,7 @@ foreAll = rbind(classData,onlineData)
 #CoroNewDaily = rev(Coro$Daily_New_Cases)
 #CoroNewDaily = Coro$Daily_New_Cases
 
-plotts.sample.wge(NewCoro$Daily_New_Cases)
+
 plotts.sample.wge(Class$Daily_New_Cases)
 
 
@@ -93,7 +93,7 @@ foreARMA$f
 
 ######    Plots
 plot(seq(1,count,1), Class$Daily_New_Cases[1:count], type = "l",xlim = c(0,count), ylab = "Texas Daily Corona Virus", main = "5 Days Forecast")
-lines(seq(count-9,count,1), preds$fcst$y1[,1], type = "l", col = "red")
+lines(seq(count-9,count,1), foreARMA$f, type = "l", col = "red")
 
 ######### ARUMA Forecast ####
 x = Class$Daily_New_Cases
@@ -128,7 +128,7 @@ acf(Pct_Change$res)
 ljung.wge(Pct_Change$res, p = aic$p, q = aic$q)
 ljung.wge(Pct_Change$res, p = aic$p, q = aic$q, K = 48)
 
-Pct_ChangeFore = fore.arma.wge(Class$Pct_Change, phi = Pct_Change$phi, theta = Pct_Change$theta, n.ahead = lenTXFuture)
+Pct_ChangeFore = fore.arma.wge(Class$Pct_Change, phi = Pct_Change$phi, theta = Pct_Change$theta, n.ahead = lenPos)
 
 Pct_ChangeFore = Pct_ChangeFore$f
 ######################################################
@@ -140,7 +140,7 @@ acf(Curve_Day$res)
 ljung.wge(Curve_Day$res, p = aic$p, q = aic$q)
 ljung.wge(Curve_Day$res, p = aic$p, q = aic$q, K = 48)
 
-Curve_DayFore = fore.arma.wge(Class$Curve_Day, phi = Curve_Day$phi, theta = Curve_Day$theta, n.ahead = lenTXFuture)
+Curve_DayFore = fore.arma.wge(Class$Curve_Day, phi = Curve_Day$phi, theta = Curve_Day$theta, n.ahead = lenPos)
 
 Curve_DayFore = Curve_DayFore$f
 
@@ -153,7 +153,7 @@ acf(Pop_Pct$res)
 ljung.wge(Pop_Pct$res, p = aic$p, q = aic$q)
 ljung.wge(Pop_Pct$res, p = aic$p, q = aic$q, K = 48)
 
-Pop_PctFore = fore.arma.wge(Class$Pop_Pct, phi = Pop_Pct$phi, theta = Pop_Pct$theta, n.ahead = lenTXFuture)
+Pop_PctFore = fore.arma.wge(Class$Pop_Pct, phi = Pop_Pct$phi, theta = Pop_Pct$theta, n.ahead = lenPos)
 
 Pop_PctFore = Pop_PctFore$f
 
@@ -249,6 +249,7 @@ ccf(Class$Pop_Pct_M7 ,Class$Daily_New_Cases)
 ccf(Class$Three_Day_Avg_Pop_Pct,Class$Daily_New_Cases)
 ccf(Class$Seven_Day_Avg_Pop_Pct,Class$Daily_New_Cases)
 
+
 ######################### Begin ##########################
 Corofit1 = lm(Daily_New_Cases~as.double( Class$Pop_Pct) + as.double( Class$Pct_Change) + as.double( Class$lagCurve), data = Class)
 phi = aic.wge(Corofit1$residuals)
@@ -259,7 +260,7 @@ ljung.wge(Corofit1$residuals, K = 48) # pval = .0058
 
 resids = fore.arma.wge(Corofit1$residuals,phi = phi$phi,n.ahead = lenPos)
 
-foreDF = data.frame(lagCurve = as.double( Curve_DayFore), Pop_Pct = as.double(Pop_PctFore),Pct_Change = Pct_ChangeFore)
+foreDF = data.frame(lagCurve = as.double(Curve_DayFore), Pop_Pct = as.double(Pop_PctFore),Pct_Change = Pct_ChangeFore)
 #predict trend manually
 preds = predict(Corofit1, newxreg  = foreDF)
 

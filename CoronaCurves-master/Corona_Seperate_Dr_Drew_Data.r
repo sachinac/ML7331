@@ -53,7 +53,7 @@ MAE = sqrt(ASE)
 VAR_NJ_DF = data.frame(State = "New Jersey", Model = 'VAR', Mean_ABS_Error = MAE, Mean_Square_Error = ASE)
 
 plot(preds_NJ)
-
+  
 #### New york ########
 count = length(ny$Daily_New_Cases)
 CoroVar = VAR(cbind(ny$Daily_New_Cases, ny$Pct_Change,ny$Pop_Pct,ny$Three_Day_Avg_Pct_Chg), type = "both", lag.max = 10)

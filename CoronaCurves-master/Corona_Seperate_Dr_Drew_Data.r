@@ -8,19 +8,6 @@ library(dplyr)
 uri.data = 'https://covidtracking.com/api/v1/states/tx/daily.csv'
 texas = read.csv(uri.data, header = T)
 
-# National to get population data ############
-#uri.data = 'https://covidtracking.com/api/v1/states/daily.csv'
-#national = read.csv(uri.data, header = T)
-
-#usCovidCleanNat <- national %>% replace(is.na(.), 0)
-
-#DataUsingNat <- usCovidCleanNat %>% dplyr::select(date,positiveIncrease)
-
-# We ignored using only data quality that scored at C because we have 1100 non labelled which is a lot to ignore. We only group by date
-#dataGrouped <-DataUsingNat %>% dplyr::group_by(date) %>% dplyr::group_by(date) %>% summarise_each(tibble::lst(sum))
-#ddply(usCovid, .(date), summarise, medABV=sum(positive))
-#dataGrouped <- dataGrouped %>% filter(date > 20200706)
-
 #####################################################
 usCovidClean <- texas %>% replace(is.na(.), 0)
 DataUsing <- usCovidClean %>% dplyr::select(date,'positiveIncrease')
@@ -44,11 +31,15 @@ ny = filter(Class, State == "NY")
 tx = filter(Class, State == "TX")
 
 
+####### Future texas Data  ########
+FutureData = read.csv("~/Documents/datascience/DS7331/CoronaCurves-master/Corona_MAE.csv", header = TRUE)
+texasPos = FutureData$TX.New.Cases
+lenTXFuture = length(texasPos)
+
+
 ### New Jersey ########
 # VAR Model
 onlineData = as.data.frame(texasPos *(8/29))
-#onlineData = as.data.frame(texasPos)
-foreAll = rbind(nj$Daily_New_Cases,onlineData)
 count = length(nj$Daily_New_Cases)
 CoroVar = VAR(cbind(nj$Daily_New_Cases, nj$Pct_Change,nj$Pop_Pct,nj$Three_Day_Avg_Pct_Chg), type = "both", lag.max = 10)
 

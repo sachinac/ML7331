@@ -1,3 +1,4 @@
+  
 library(tswge)
 library(orcutt)
 library(vars)
@@ -8,19 +9,6 @@ library(dplyr)
 uri.data = 'https://covidtracking.com/api/v1/states/tx/daily.csv'
 texas = read.csv(uri.data, header = T)
 
-# National to get population data ############
-#uri.data = 'https://covidtracking.com/api/v1/states/daily.csv'
-#national = read.csv(uri.data, header = T)
-
-#usCovidCleanNat <- national %>% replace(is.na(.), 0)
-
-#DataUsingNat <- usCovidCleanNat %>% dplyr::select(date,positiveIncrease)
-
-# We ignored using only data quality that scored at C because we have 1100 non labelled which is a lot to ignore. We only group by date
-#dataGrouped <-DataUsingNat %>% dplyr::group_by(date) %>% dplyr::group_by(date) %>% summarise_each(tibble::lst(sum))
-#ddply(usCovid, .(date), summarise, medABV=sum(positive))
-#dataGrouped <- dataGrouped %>% filter(date > 20200706)
-
 #####################################################
 usCovidClean <- texas %>% replace(is.na(.), 0)
 DataUsing <- usCovidClean %>% dplyr::select(date,'positiveIncrease')
@@ -29,27 +17,11 @@ DataUsing <- usCovidClean %>% dplyr::select(date,'positiveIncrease')
 DataUsing<- DataUsing %>% filter(date > 20200706)   
 DataUsing<- as.data.frame(DataUsing)
 DataUsing$date <- as.factor(DataUsing$date)
-#DataUsing$Pop_PositiveIncrease <- dataGrouped$sum
-#DataUsing$Pop_Pct <- (DataUsing$positiveIncrease / DataUsing$Pop_PositiveIncrease)
 
-#DataUsing$lagpos = dplyr::lead(DataUsing$positiveIncrease,1)
+#lenPos = length(DataUsing$positiveIncrease)
+#texasPos = rev(DataUsing$positiveIncrease)
+### Ignore these data point these are ones gotten directly from the covid data tracking website.
 
-#DataUsing$Pct_Change <- DataUsing$positiveIncrease - DataUsing$lagpos
-
-####### This was used when I didn't know that there was a columnn named positive increased.
-#DataUsing$lagpos = dplyr::lead(DataUsing$positive,1)
-
-#DataUsing$Daily <- DataUsing$positive - DataUsing$lagpos
-
-#dataUsed <- DataUsing %>% dplyr::select(date, Daily)
-
-#dataUsed <-dataUsed %>% filter(!is.na(Daily))
-
-#lenPos = length(dataUsed$Daily)
-#texasPos = rev(dataUsed$Daily)
-
-lenPos = length(DataUsing$positiveIncrease)
-texasPos = rev(DataUsing$positiveIncrease)
 
 ############################## Class Data ###################################
 Class = read.csv("~/Documents/datascience/DS7331/CoronaCurves-master/Corona_Curves_TX_NY_NJ.csv", header = TRUE)
@@ -63,6 +35,11 @@ tx = filter(Class, State == "TX")
 #NewClass <- rbind(ny, nj, tx)
 Class <- rbind(nj, ny, tx)
 
+
+####### Future texas Data  ########
+FutureData = read.csv("~/Documents/datascience/DS7331/CoronaCurves-master/Corona_MAE.csv", header = TRUE)
+texasPos = FutureData$TX.New.Cases
+lenPos = length(texasPos)
 ########################################### Combine latest Texas data ##########################
 
 onlineData = as.data.frame(texasPos)
@@ -73,18 +50,7 @@ names(onlineData)[1] <- "Daily_New_Cases"
 
 foreAll = rbind(classData,onlineData)
 
-#CoroNewDaily = rev(Coro$Daily_New_Cases)
-#CoroNewDaily = Coro$Daily_New_Cases
-
-
 plotts.sample.wge(Class$Daily_New_Cases)
-
-
-factor.wge(NewCoro$Daily_New_Cases)
-factor.wge(Class$Daily_New_Cases)
-
-acf(Class$Daily_New_Cases)
-pacf(Class$Daily_New_Cases)
 
 ### ARMA Forcast #####
 y.mle = est.arma.wge(Class$Daily_New_Cases, p = 1, q = 1)
@@ -119,7 +85,7 @@ lj$pval # 0.52 so we fail to reject the null. There are not enough evidence to s
 
 
 ####################### Predict Class explanatory variables #########################
-## Pct_change
+## Pct_change Forecast
 plotts.sample.wge(Class$Pct_Change)
 
 aic = aic.wge(Class$Pct_Change,p = 0:10, q = 0:2, type = 'bic')
@@ -132,7 +98,7 @@ Pct_ChangeFore = fore.arma.wge(Class$Pct_Change, phi = Pct_Change$phi, theta = P
 
 Pct_ChangeFore = Pct_ChangeFore$f
 ######################################################
-# Curve Day
+# Curve Day forecast
 plotts.sample.wge(Class$Curve_Day)
 aic = aic.wge(Class$Curve_Day,p = 0:10, q = 0:2, type = 'bic')
 Curve_Day = est.arma.wge(Class$Curve_Day,p = aic$p, q = aic$q)
@@ -143,9 +109,13 @@ ljung.wge(Curve_Day$res, p = aic$p, q = aic$q, K = 48)
 Curve_DayFore = fore.arma.wge(Class$Curve_Day, phi = Curve_Day$phi, theta = Curve_Day$theta, n.ahead = lenPos)
 
 Curve_DayFore = Curve_DayFore$f
+################################################
+# Actual Curve day should be used since we know it would be continuation of the last curve day from previous data
+Curve_DayFore = FutureData$Curve_Day
+
 
 ###########################
-## Pop_ct
+## Pop_ct Forecast
 plotts.sample.wge(Class$Pop_Pct)
 aic = aic.wge(Class$Pop_Pct,p = 0:10, q = 0:2, type = 'bic')
 Pop_Pct = est.arma.wge(Class$Pop_Pct,p = aic$p, q = aic$q)
@@ -192,16 +162,14 @@ MAE = sqrt(ASE)
 VAR_DF = data.frame(Model = 'VAR', Mean_ABS_Error = MAE, Mean_Square_Error = ASE)
 
 plot(preds)
-dev.off()
-plot(seq(1,count+lenPos,1), foreAll$Daily_New_Cases, type = "l",xlim = c(0,count+lenPos), ylab = "Texas Daily Corona Virus Forecast", main = paste(as.character(lenPos),"Days Forecast"))
-lines(seq(count+ 1,count+lenPos,1), preds$fcst$y1[,1], type = "l", col = "red")
+
 
 #################################################################################
 
 ##############   MLP    ####################
 CoroDF = data.frame(popct = Class$Pop_Pct,pctchange =Class$Pct_Change, cv = Class$Curve_Day)
 
-foreDF = data.frame(cv = as.double( Curve_DayFore), popct = as.double(Pop_PctFore),pctchange = Pct_ChangeFore)
+foreDF = data.frame(cv = Curve_DayFore, popct = Pop_PctFore,pctchange = Pct_ChangeFore)
 
 foreAllDF = rbind(CoroDF,foreDF)
 
@@ -251,7 +219,8 @@ ccf(Class$Seven_Day_Avg_Pop_Pct,Class$Daily_New_Cases)
 
 
 ######################### Begin ##########################
-Corofit1 = lm(Daily_New_Cases~as.double( Class$Pop_Pct) + as.double( Class$Pct_Change) + as.double( Class$lagCurve), data = Class)
+
+Corofit1 = lm(Daily_New_Cases~ lagCurve + Pop_Pct + Pct_Change, data = Class)
 phi = aic.wge(Corofit1$residuals)
 
 acf(Corofit1$residuals)
@@ -260,9 +229,9 @@ ljung.wge(Corofit1$residuals, K = 48) # pval = .0058
 
 resids = fore.arma.wge(Corofit1$residuals,phi = phi$phi,n.ahead = lenPos)
 
-foreDF = data.frame(lagCurve = as.double(Curve_DayFore), Pop_Pct = as.double(Pop_PctFore),Pct_Change = Pct_ChangeFore)
+foreDF = data.frame(lagCurve = Curve_DayFore, Pop_Pct = Pop_PctFore,Pct_Change = Pct_ChangeFore)
 #predict trend manually
-preds = predict(Corofit1, newxreg  = foreDF)
+preds = predict(Corofit1, newdata = foreDF)
 
 predsFinal = preds + resids$f
 

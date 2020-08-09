@@ -27,11 +27,18 @@ NJ$Curve_Day <- seq(1, length(NJ$date), by= 1)
 
 #####################################################
 Class <- rbind(NJ, NY, TX)
-foreAll <- rbind(NJ, NY, TX,TX_Future)
-lenForeAll <- length(foreAll$date)
-lenTXFuture <- length(TX_Future$date)
+#foreAll <- rbind(NJ, NY, TX,TX_Future)
+#lenForeAll <- length(foreAll$date)
+#lenTXFuture <- length(TX_Future$date)
 
 colSums(is.na(Class))
+
+####### Future texas Data  ########
+FutureData = read.csv("~/Documents/datascience/DS7331/CoronaCurves-master/Corona_MAE.csv", header = TRUE)
+texasPos = FutureData$TX.New.Cases
+lenTXFuture = length(texasPos)
+foreAll <- rbind(NJ, NY, TX,texasPos)
+
 
 ########################################### Combine latest Texas data ##########################
 plotts.sample.wge(Class$positiveIncrease)
@@ -41,8 +48,6 @@ pacf(Class$positiveIncrease)
 
 ################################## forecast explanatory Variable. ##############
 Class <- Class%>% mutate(positive_perc = (positiveIncrease/totalTestResults)*100)
-
-ggpairs(Class %>% dplyr::select(positiveIncrease,negativeIncrease, deathIncrease,totalTestResults,positive_perc,hospitalizedCurrently,Curve_Day))
 
 ##################################################
 ################## Hospitalized Currrently ######################################################
@@ -58,7 +63,7 @@ hospitalFore = fore.arma.wge(Class$hospitalizedCurrently, phi = hospital$phi, th
 
 hospitalFore = hospitalFore$f
 
-######################## Negative Increase Daily ###############################################
+######################## Death Increase Daily ###############################################
 plotts.sample.wge(Class$deathIncrease)
 aic = aic.wge(Class$deathIncrease,p = 0:10, q = 0:2, type = 'bic')
 death = est.arma.wge(Class$deathIncrease,p = aic$p, q = aic$q)
@@ -71,28 +76,82 @@ deathFore = fore.aruma.wge(Class$deathIncrease, phi = perc$phi, d = 1, theta = p
 
 deathFore = deathFore$f
 
-############################# Curve Day ###########################################################
-plotts.sample.wge(Class$Curve_Day)
-aic = aic.wge(Class$Curve_Day,p = 0:10, q = 0:2, type = 'bic')
-death = est.arma.wge(Class$Curve_Day,p = aic$p, q = aic$q)
+###################### Negative Daily ###############################
+negativeInc_01= artrans.wge(Class$negativeIncrease, c(rep(0,0),1))
+aic = aic.wge(negativeInc_01,p = 0:10, q = 0:2, type = 'bic')
+negative = est.arma.wge(negativeInc_01,p = aic$p, q = aic$q)
 
-acf(death$res)
-ljung.wge(death$res, p = aic$p, q = aic$q)
-ljung.wge(death$res, p = aic$p, q = aic$q, K = 48)
+acf(negative$res)
+ljung.wge(negative$res, p = aic$p, q = aic$q)
+ljung.wge(negative$res, p = aic$p, q = aic$q, K = 48)
 
-deathFore = fore.aruma.wge(Class$Curve_Day, phi = perc$phi, d = 1, theta = perc$theta, n.ahead = lenTXFuture)
+negativeFore = fore.aruma.wge(dataGrouped$negativeIncrease, phi = perc$phi, d = 1, theta = perc$theta, n.ahead = lenTXFuture)
+negativeFore = negativeFore$f
+######################### Total Test Forecast #########################
+library(orcutt)
+x = Class$totalTestResults
+n = length(x)
+t = 1:n
+d = lm(x~t)
+x.z = x - d$coefficients[1] - d$coefficients[2]*t
 
-deathFore = deathFore$f
 
-###################################################################################################################
+ar.z = aic.wge(x.z, p = 0:15, q = 0:2) # ar.z$p is 10
+
+# Tranform the dependent varible daily rates 
+y.trans = artrans.wge(x, phi.tr = ar.z$phi)
+
+# Transform the independent variable t (trend)
+t.trans = artrans.wge(t, phi.tr = ar.z$phi)
+plotts.sample.wge(y.trans)    # looks like noise
+plotts.sample.wge(t.trans)
+
+
+# regress y hat t on T hat t using OLS
+fitTotal = lm(y.trans~t.trans)
+
+# evaluate the residuals( after Cochrane-Orcutt)
+
+plotts.wge(fitTotal$residuals)
+acf(fitTotal$residuals)
+ljung.wge(fitTotal$residuals) # There is evidence that this is white noise. Pval = 0.99. Fail to reject.
+ljung.wge(fitTotal$residuals, K = 48)
+
+# phis and white noise variance
+x.z.est = est.arma.wge(x.z, p = ar.z$p, q = ar.z$q) # sig plus noise phis
+
+x.z.est$avar  # the variance
+
+# ASE for signal plus noise
+totalFore = fore.sigplusnoise.wge(dataGrouped$totalTestResults, max.p = 10, n.ahead = lenTXFuture)
+totalFore = totalFore$f
+
+##################### Actual Curve Day ###########################
+# Actual Curve day should be used since we know it would be continuation of the last curve day from previous data
+Curve_DayFore = FutureData$Curve_Day
+
+################### Positive percent day #############################################################
+perc_07= artrans.wge(dataGrouped$positive_perc, c(rep(0,6),1))
+aic = aic.wge(perc_07,p = 0:10, q = 0:2, type = 'bic')
+#aic = aic.wge(dataGrouped$positive_perc,p = 0:10, q = 0:2, type = 'bic')
+#perc = est.arma.wge(dataGrouped$positive_perc,p = aic$p, q = aic$q)
+perc = est.arma.wge(perc_07,p = aic$p, q = aic$q)
+
+acf(perc$res) 
+ljung.wge(perc$res, p = aic$p, q = aic$q)
+ljung.wge(perc$res, p = aic$p, q = aic$q, K = 48)
+
+percFore = fore.aruma.wge(dataGrouped$positive_perc, phi = perc$phi, s = 7, theta = perc$theta, n.ahead = lenTXFuture)
+
+percFore = percFore$f
 
 # VAR Model 
-count = length(Class$positiveIncrease)
+count = length(texasPos)
 CoroVar = VAR(cbind(Class$positiveIncrease, Class$negativeIncrease, Class$Curve_Day), type = "both", lag.max = 10)
 
 preds = predict(CoroVar,n.ahead = lenTXFuture) 
 
-ASE = mean((TX_Future$positiveIncrease - preds$fcst$y1[,1])^2)
+ASE = mean((texasPos - preds$fcst$y1[,1])^2)
 ASE
 
 MAE = sqrt(ASE)
@@ -101,9 +160,6 @@ VAR_DF = data.frame(Model = 'VAR', Mean_ABS_Error = MAE, Mean_Square_Error = ASE
 
 plot(preds)
 
-dev.off()
-plot(seq(1,lenForeAll,1), foreAll$positiveIncrease, type = "l",xlim = c(0,lenForeAll), ylab = "Cardiac Mortality", main = "20 Week Cardiac Mortality Forecast")
-lines(seq(count+1,lenForeAll,1), preds$fcst$y1[,1], type = "l", col = "red")
 
 #################################################################################
 # MLP Model
@@ -112,18 +168,22 @@ fit.mlp = mlp(ts(Class$positiveIncrease),reps = 20,comb = "mode",xreg = ClassDF)
 fit.mlp
 plot(fit.mlp)
 foreAllDF = data.frame(negInc = ts(foreAll$negativeIncrease),cv = ts(foreAll$Curve_Day), test =  ts(foreAll$totalTestResults),hospCur = ts(foreAll$hospitalizedCurrently),dInc = ts(foreAll$deathIncrease))
+
+
+CoroDF = data.frame(negInc = Class$negativeIncrease,cv = Class$Curve_Day, test = Class$totalTestResults,hospCur = Class$hospitalizedCurrently,dInc = Class$deathIncrease)
+
+foreDF = data.frame(cv = Curve_DayFore, negInc = negativeFore, test = totalFore,hospCur = hospitalFore,dInc = deathFore)
+
+foreAllDF = rbind(CoroDF,foreDF)
+
 fore.mlp = forecast(fit.mlp, h = lenTXFuture, xreg = foreAllDF)
 plot(fore.mlp) 
-ASE = mean((TX_Future$positiveIncrease - fore.mlp$mean)^2)
+ASE = mean((texasPos - fore.mlp$mean)^2)
 ASE
 
 MAE = sqrt(ASE)
 
 MLP_DF = data.frame(Model = 'MLP', Mean_ABS_Error = MAE, Mean_Square_Error = ASE)
-
-dev.off()
-plot(seq(1,lenForeAll,1), foreAll$positiveIncrease, type = "l",xlim = c(0,lenForeAll), ylab = "Cardiac Mortality", main = "20 Week Cardiac Mortality Forecast")
-lines(seq(count+1,lenForeAll,1), fore.mlp$mean, type = "l", col = "red")
 
 ################################ MLR ########################################
 ccf(Class$negativeIncrease,Class$positiveIncrease)
@@ -143,25 +203,26 @@ plotts.sample.wge(Bpart1High$x.filt)
 
 ######################### Begin ##########################
 
-Corofit = lm(positiveIncrease~negativeIncrease + leadCurve + leadhosp + lagtest + leaddeath, data = Class)
+Corofit = lm(positiveIncrease~negativeIncrease + leadCurve + leadhosp + lagtest, data = Class)
 phi = aic.wge(Corofit$residuals)
 ljung.wge(Corofit$residuals) # pval = .066
 ljung.wge(Corofit$residuals, K = 48) # pval = .0058
 
 #TX_FutureDF = TX_Future %>% dplyr::select(negativeIncrease,Curve_Day,totalTestResults,hospitalizedCurrently)
-TX_FutureDF = data.frame(leadCurve = TX_Future$Curve_Day,lagtest= TX_Future$totalTestResults,leadhosp = TX_Future$hospitalizedCurrently, negativeIncrease = TX_Future$negativeIncrease, leaddeath = TX_Future$deathIncrease)
+TX_FutureDF = data.frame(leadCurve = TX_Future$Curve_Day,lagtest= TX_Future$totalTestResults,leadhosp = TX_Future$hospitalizedCurrently, negativeIncrease = TX_Future$negativeIncrease)
+foreDF = data.frame(negativeIncrease = as.double( negativeFore), lagtest = as.double(totalFore),leadhosp = hospitalFore,leadPositive_perc = percFore)
 
 
 resids = fore.arma.wge(Corofit$residuals,phi = phi$phi,n.ahead = lenTXFuture)
 #predict trend manually
-#preds = predict(Corofit, newdata = TX_FutureDF)
-preds = predict(Corofit)
+preds = predict(Corofit, newdata = TX_FutureDF)
+
 
 predsFinal = preds + resids$f
 
 predsFinal <- as.numeric(predsFinal)
 
-ASE = mean((TX_Future$positiveIncrease - predsFinal)^2)
+ASE = mean((texasPos - predsFinal)^2)
 ASE
 
 MAE = sqrt(ASE)

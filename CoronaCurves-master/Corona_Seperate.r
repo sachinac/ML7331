@@ -28,6 +28,12 @@ NJ$Curve_Day <- seq(1, length(NJ$date), by= 1)
 NY <- NY%>% mutate(positive_perc = (positiveIncrease/totalTestResults)*100)
 NJ <- NJ%>% mutate(positive_perc = (positiveIncrease/totalTestResults)*100)
 
+####### Future texas Data  ########
+FutureData = read.csv("~/Documents/datascience/DS7331/CoronaCurves-master/Corona_MAE.csv", header = TRUE)
+texasPos = FutureData$TX.New.Cases
+lenTXFuture = length(texasPos)
+
+
 
 ######## NY VAR Model 
 count = length(NY$positiveIncrease)
@@ -35,7 +41,7 @@ CoroVar = VAR(cbind(NY$positiveIncrease * (8/29), NY$negativeIncrease * (8/29)),
 
 preds = predict(CoroVar,n.ahead = lenTXFuture) 
 
-ASE = mean((TX_Future$positiveIncrease * (8/29) - preds$fcst$y1[,1])^2)
+ASE = mean((texasPos * (8/29) - preds$fcst$y1[,1])^2)
 ASE
 
 MAE = sqrt(ASE)
@@ -50,7 +56,7 @@ CoroVar = VAR(cbind(NJ$positiveIncrease * (8/29), NJ$negativeIncrease * (8/29)),
 
 preds = predict(CoroVar,n.ahead = lenTXFuture) 
 
-ASE = mean((TX_Future$positiveIncrease * (8/29) - preds$fcst$y1[,1])^2)
+ASE = mean((texasPos * (8/29) - preds$fcst$y1[,1])^2)
 ASE
 
 MAE = sqrt(ASE)
@@ -64,7 +70,7 @@ plot(preds)
 
 preds_TX = (preds_NY$fcst$y1[,1] + preds_NJ$fcst$y1[,1])/2
 
-ASE = mean((TX_Future$positiveIncrease  * (8/29) - preds_TX)^2)
+ASE = mean((texasPos  * (8/29) - preds_TX)^2)
 MAE = sqrt(ASE)
 
 VAR_TX_DF = data.frame(State = "Ensemble/Texas",Model = 'VAR', Mean_ABS_Error = MAE, Mean_Square_Error = ASE)

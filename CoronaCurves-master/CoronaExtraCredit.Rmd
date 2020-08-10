@@ -144,6 +144,9 @@ MAE = mean(abs(texasPos - preds$fcst$y1[,1]))
 
 VAR_DF = data.frame(Model = 'VAR', Mean_ABS_Error = MAE, Mean_Square_Error = ASE)
 
+plot(seq(1,32,1), preds$fcst$y1[,1], type = "l", ylab = "New Daily Cases", main = "Predicted Days Forecast")
+plot(seq(1,32,1), texasPos, type = "l", ylab = "New Daily Cases", main = "Actual Days Forecast")
+
 plot(preds)
 
 ```
@@ -165,6 +168,9 @@ fore.mlp = forecast(fit.mlp, h = lenPos,xreg = foreAllDF)
 ASE = mean((texasPos - fore.mlp$mean)^2)
 ASE
 
+plot(seq(1,32,1), fore.mlp$mean, type = "l", ylab = "New Daily Cases", main = "Predicted Days Forecast")
+plot(seq(1,32,1), texasPos, type = "l", ylab = "New Daily Cases", main = "Actual Days Forecast")
+
 MAE = mean(abs(texasPos - fore.mlp$mean))
 MAE
 MLP_DF = data.frame(Model = 'MLP', Mean_ABS_Error = MAE, Mean_Square_Error = ASE)
@@ -176,29 +182,8 @@ plot(fit.mlp)
 ```{r}
 ccf(Class$Pop_Pct,Class$Daily_New_Cases)
 ccf(Class$Pct_Change,Class$Daily_New_Cases)
-ccf(Class$Three_Day_Avg_Pct_Chg,Class$Daily_New_Cases)
 ccf(Class$Curve_Day,Class$Daily_New_Cases)
 Class$lagCurve = dplyr::lag(Class$Curve_Day,3)
-
-ccf(Class$Pct_Change_M1 ,Class$Daily_New_Cases)
-ccf(Class$Pct_Change_M2,Class$Daily_New_Cases)
-ccf(Class$Pct_Change_M3,Class$Daily_New_Cases)
-ccf(Class$Pct_Change_M4,Class$Daily_New_Cases)
-ccf(Class$Pct_Change_M5,Class$Daily_New_Cases)
-ccf(Class$Pct_Change_M6,Class$Daily_New_Cases)
-ccf(Class$Pct_Change_M7,Class$Daily_New_Cases)
-ccf(Class$Three_Day_Avg_Pct_Chg,Class$Daily_New_Cases)
-ccf(Class$Seven_Day_Avg_Pct_Chg,Class$Daily_New_Cases)
-ccf(Class$Pop_Pct_M1 ,Class$Daily_New_Cases)
-ccf(Class$Pop_Pct_M2 ,Class$Daily_New_Cases)
-ccf(Class$Pop_Pct_M3 ,Class$Daily_New_Cases)
-ccf(Class$Pop_Pct_M4 ,Class$Daily_New_Cases)
-ccf(Class$Pop_Pct_M5 ,Class$Daily_New_Cases)
-ccf(Class$Pop_Pct_M6 ,Class$Daily_New_Cases)
-ccf(Class$Pop_Pct_M7 ,Class$Daily_New_Cases)
-ccf(Class$Three_Day_Avg_Pop_Pct,Class$Daily_New_Cases)
-ccf(Class$Seven_Day_Avg_Pop_Pct,Class$Daily_New_Cases)
-
 
 ######################### Begin ##########################
 
@@ -222,7 +207,8 @@ predsFinal <- as.numeric(predsFinal)
 ASE = mean((texasPos - predsFinal)^2)
 ASE
 
-
+plot(seq(1,32,1), predsFinal, type = "l", ylab = "New Daily Cases", main = "Predicted Days Forecast")
+plot(seq(1,32,1), texasPos, type = "l", ylab = "New Daily Cases", main = "Actual Days Forecast")
 MAE = mean(abs(texasPos - predsFinal))
 
 MLR_DF = data.frame(Model = 'MLR', Mean_ABS_Error = MAE, Mean_Square_Error = ASE)

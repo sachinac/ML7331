@@ -791,7 +791,7 @@ CoroVar = VAR(cbind(Class$Daily_New_Cases, Class$Pct_Change,Class$Curve_Day), ty
 ASE = mean((texasPos - preds$fcst$y1[,1])^2)
 ASE</code></pre>
 <pre><code>## [1] 4189203</code></pre>
-<pre class="r"><code>MAE = sqrt(ASE)
+<pre class="r"><code>MAE = mean(abs(texasPos - preds$fcst$y1[,1]))
 
 VAR_DF = data.frame(Model = 'VAR', Mean_ABS_Error = MAE, Mean_Square_Error = ASE)
 
@@ -823,9 +823,9 @@ fit.mlp</code></pre>
 ASE = mean((texasPos - fore.mlp$mean)^2)
 ASE</code></pre>
 <pre><code>## [1] 3466683</code></pre>
-<pre class="r"><code>MAE = sqrt(ASE)
+<pre class="r"><code>MAE = mean(abs(texasPos - fore.mlp$mean))
 MAE</code></pre>
-<pre><code>## [1] 1861.903</code></pre>
+<pre><code>## [1] 1496.376</code></pre>
 <pre class="r"><code>MLP_DF = data.frame(Model = 'MLP', Mean_ABS_Error = MAE, Mean_Square_Error = ASE)
 
 plot(fit.mlp)</code></pre>
@@ -928,16 +928,16 @@ predsFinal &lt;- as.numeric(predsFinal)
 ASE = mean((texasPos - predsFinal)^2)
 ASE</code></pre>
 <pre><code>## [1] 6501870</code></pre>
-<pre class="r"><code>MAE = sqrt(ASE)
+<pre class="r"><code>MAE = mean(abs(texasPos - predsFinal))
 
 MLR_DF = data.frame(Model = 'MLR', Mean_ABS_Error = MAE, Mean_Square_Error = ASE)
 
 df = rbind(VAR_DF,MLP_DF,MLR_DF)
 df</code></pre>
 <pre><code>##   Model Mean_ABS_Error Mean_Square_Error
-## 1   VAR       2046.754           4189203
-## 2   MLP       1861.903           3466683
-## 3   MLR       2549.876           6501870</code></pre>
+## 1   VAR       1636.346           4189203
+## 2   MLP       1496.376           3466683
+## 3   MLR       2183.053           6501870</code></pre>
 </div>
 </div>
 

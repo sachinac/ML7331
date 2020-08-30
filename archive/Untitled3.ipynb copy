@@ -1,0 +1,3292 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2020-08-03T05:07:48.574403Z",
+     "start_time": "2020-08-03T05:07:40.978873Z"
+    }
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "TuriCreate currently only supports using one GPU. Setting 'num_gpus' to 1.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>Finished parsing file /Users/sachin/Downloads/ml-20m/ratings.csv</pre>"
+      ],
+      "text/plain": [
+       "Finished parsing file /Users/sachin/Downloads/ml-20m/ratings.csv"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>Parsing completed. Parsed 100 lines in 0.506968 secs.</pre>"
+      ],
+      "text/plain": [
+       "Parsing completed. Parsed 100 lines in 0.506968 secs."
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "------------------------------------------------------\n",
+      "Inferred types from first 100 line(s) of file as \n",
+      "column_type_hints=[int,int,float,int]\n",
+      "If parsing fails due to incorrect types, you can correct\n",
+      "the inferred type list above and pass it to read_csv in\n",
+      "the column_type_hints argument\n",
+      "------------------------------------------------------\n"
+     ]
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>Read 2042753 lines. Lines per second: 2.12796e+06</pre>"
+      ],
+      "text/plain": [
+       "Read 2042753 lines. Lines per second: 2.12796e+06"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>Finished parsing file /Users/sachin/Downloads/ml-20m/ratings.csv</pre>"
+      ],
+      "text/plain": [
+       "Finished parsing file /Users/sachin/Downloads/ml-20m/ratings.csv"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>Parsing completed. Parsed 20000263 lines in 5.0343 secs.</pre>"
+      ],
+      "text/plain": [
+       "Parsing completed. Parsed 20000263 lines in 5.0343 secs."
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "import turicreate as tc\n",
+    "tc.config.set_num_gpus(2)\n",
+    "actions = tc.SFrame.read_csv('/Users/sachin/Downloads/ml-20m/ratings.csv')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2020-08-03T06:22:02.505134Z",
+     "start_time": "2020-08-03T06:22:02.474967Z"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div style=\"max-height:1000px;max-width:1500px;overflow:auto;\"><table frame=\"box\" rules=\"cols\">\n",
+       "    <tr>\n",
+       "        <th style=\"padding-left: 1em; padding-right: 1em; text-align: center\">userId</th>\n",
+       "        <th style=\"padding-left: 1em; padding-right: 1em; text-align: center\">movieId</th>\n",
+       "        <th style=\"padding-left: 1em; padding-right: 1em; text-align: center\">rating</th>\n",
+       "        <th style=\"padding-left: 1em; padding-right: 1em; text-align: center\">timestamp</th>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">1</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">2</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">3.5</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">1112486027</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">1</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">29</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">3.5</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">1112484676</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">1</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">32</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">3.5</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">1112484819</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">1</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">47</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">3.5</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">1112484727</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">1</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">50</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">3.5</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">1112484580</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">1</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">112</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">3.5</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">1094785740</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">1</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">151</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">4.0</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">1094785734</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">1</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">223</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">4.0</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">1112485573</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">1</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">253</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">4.0</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">1112484940</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">1</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">260</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">4.0</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">1112484826</td>\n",
+       "    </tr>\n",
+       "</table>\n",
+       "[20000263 rows x 4 columns]<br/>Note: Only the head of the SFrame is printed.<br/>You can use print_rows(num_rows=m, num_columns=n) to print more rows and columns.\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "Columns:\n",
+       "\tuserId\tint\n",
+       "\tmovieId\tint\n",
+       "\trating\tfloat\n",
+       "\ttimestamp\tint\n",
+       "\n",
+       "Rows: 20000263\n",
+       "\n",
+       "Data:\n",
+       "+--------+---------+--------+------------+\n",
+       "| userId | movieId | rating | timestamp  |\n",
+       "+--------+---------+--------+------------+\n",
+       "|   1    |    2    |  3.5   | 1112486027 |\n",
+       "|   1    |    29   |  3.5   | 1112484676 |\n",
+       "|   1    |    32   |  3.5   | 1112484819 |\n",
+       "|   1    |    47   |  3.5   | 1112484727 |\n",
+       "|   1    |    50   |  3.5   | 1112484580 |\n",
+       "|   1    |   112   |  3.5   | 1094785740 |\n",
+       "|   1    |   151   |  4.0   | 1094785734 |\n",
+       "|   1    |   223   |  4.0   | 1112485573 |\n",
+       "|   1    |   253   |  4.0   | 1112484940 |\n",
+       "|   1    |   260   |  4.0   | 1112484826 |\n",
+       "+--------+---------+--------+------------+\n",
+       "[20000263 rows x 4 columns]\n",
+       "Note: Only the head of the SFrame is printed.\n",
+       "You can use print_rows(num_rows=m, num_columns=n) to print more rows and columns."
+      ]
+     },
+     "execution_count": 2,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "actions"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2020-08-03T06:22:53.533722Z",
+     "start_time": "2020-08-03T06:22:53.401343Z"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<pre>Finished parsing file /Users/sachin/Downloads/ml-20m/movies.csv</pre>"
+      ],
+      "text/plain": [
+       "Finished parsing file /Users/sachin/Downloads/ml-20m/movies.csv"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>Parsing completed. Parsed 100 lines in 0.047714 secs.</pre>"
+      ],
+      "text/plain": [
+       "Parsing completed. Parsed 100 lines in 0.047714 secs."
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "------------------------------------------------------\n",
+      "Inferred types from first 100 line(s) of file as \n",
+      "column_type_hints=[int,str,str]\n",
+      "If parsing fails due to incorrect types, you can correct\n",
+      "the inferred type list above and pass it to read_csv in\n",
+      "the column_type_hints argument\n",
+      "------------------------------------------------------\n"
+     ]
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>Finished parsing file /Users/sachin/Downloads/ml-20m/movies.csv</pre>"
+      ],
+      "text/plain": [
+       "Finished parsing file /Users/sachin/Downloads/ml-20m/movies.csv"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>Parsing completed. Parsed 27278 lines in 0.027761 secs.</pre>"
+      ],
+      "text/plain": [
+       "Parsing completed. Parsed 27278 lines in 0.027761 secs."
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "items = tc.SFrame.read_csv('/Users/sachin/Downloads/ml-20m/movies.csv')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2020-08-03T06:22:57.010502Z",
+     "start_time": "2020-08-03T06:22:56.993425Z"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div style=\"max-height:1000px;max-width:1500px;overflow:auto;\"><table frame=\"box\" rules=\"cols\">\n",
+       "    <tr>\n",
+       "        <th style=\"padding-left: 1em; padding-right: 1em; text-align: center\">movieId</th>\n",
+       "        <th style=\"padding-left: 1em; padding-right: 1em; text-align: center\">title</th>\n",
+       "        <th style=\"padding-left: 1em; padding-right: 1em; text-align: center\">genres</th>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">1</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">Toy Story (1995)</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">Adventure|Animation|Child<br>ren|Comedy|Fantasy ...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">2</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">Jumanji (1995)</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">Adventure|Children|Fantas<br>y ...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">3</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">Grumpier Old Men (1995)</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">Comedy|Romance</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">4</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">Waiting to Exhale (1995)</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">Comedy|Drama|Romance</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">5</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">Father of the Bride Part<br>II (1995) ...</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">Comedy</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">6</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">Heat (1995)</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">Action|Crime|Thriller</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">7</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">Sabrina (1995)</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">Comedy|Romance</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">8</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">Tom and Huck (1995)</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">Adventure|Children</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">9</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">Sudden Death (1995)</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">Action</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">10</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">GoldenEye (1995)</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">Action|Adventure|Thriller</td>\n",
+       "    </tr>\n",
+       "</table>\n",
+       "[27278 rows x 3 columns]<br/>Note: Only the head of the SFrame is printed.<br/>You can use print_rows(num_rows=m, num_columns=n) to print more rows and columns.\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "Columns:\n",
+       "\tmovieId\tint\n",
+       "\ttitle\tstr\n",
+       "\tgenres\tstr\n",
+       "\n",
+       "Rows: 27278\n",
+       "\n",
+       "Data:\n",
+       "+---------+-------------------------------+-------------------------------+\n",
+       "| movieId |             title             |             genres            |\n",
+       "+---------+-------------------------------+-------------------------------+\n",
+       "|    1    |        Toy Story (1995)       | Adventure|Animation|Childr... |\n",
+       "|    2    |         Jumanji (1995)        |   Adventure|Children|Fantasy  |\n",
+       "|    3    |    Grumpier Old Men (1995)    |         Comedy|Romance        |\n",
+       "|    4    |    Waiting to Exhale (1995)   |      Comedy|Drama|Romance     |\n",
+       "|    5    | Father of the Bride Part I... |             Comedy            |\n",
+       "|    6    |          Heat (1995)          |     Action|Crime|Thriller     |\n",
+       "|    7    |         Sabrina (1995)        |         Comedy|Romance        |\n",
+       "|    8    |      Tom and Huck (1995)      |       Adventure|Children      |\n",
+       "|    9    |      Sudden Death (1995)      |             Action            |\n",
+       "|    10   |        GoldenEye (1995)       |   Action|Adventure|Thriller   |\n",
+       "+---------+-------------------------------+-------------------------------+\n",
+       "[27278 rows x 3 columns]\n",
+       "Note: Only the head of the SFrame is printed.\n",
+       "You can use print_rows(num_rows=m, num_columns=n) to print more rows and columns."
+      ]
+     },
+     "execution_count": 4,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "items"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 28,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2020-08-03T07:13:19.707916Z",
+     "start_time": "2020-08-03T07:05:01.390045Z"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<pre>Preparing data set.</pre>"
+      ],
+      "text/plain": [
+       "Preparing data set."
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>    Data has 19970212 observations with 138493 users and 26657 items.</pre>"
+      ],
+      "text/plain": [
+       "    Data has 19970212 observations with 138493 users and 26657 items."
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>    Data prepared in: 9.71891s</pre>"
+      ],
+      "text/plain": [
+       "    Data prepared in: 9.71891s"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>Training ranking_factorization_recommender for recommendations.</pre>"
+      ],
+      "text/plain": [
+       "Training ranking_factorization_recommender for recommendations."
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>+--------------------------------+--------------------------------------------------+----------+</pre>"
+      ],
+      "text/plain": [
+       "+--------------------------------+--------------------------------------------------+----------+"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>| Parameter                      | Description                                      | Value    |</pre>"
+      ],
+      "text/plain": [
+       "| Parameter                      | Description                                      | Value    |"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>+--------------------------------+--------------------------------------------------+----------+</pre>"
+      ],
+      "text/plain": [
+       "+--------------------------------+--------------------------------------------------+----------+"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>| num_factors                    | Factor Dimension                                 | 32       |</pre>"
+      ],
+      "text/plain": [
+       "| num_factors                    | Factor Dimension                                 | 32       |"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>| regularization                 | L2 Regularization on Factors                     | 1e-09    |</pre>"
+      ],
+      "text/plain": [
+       "| regularization                 | L2 Regularization on Factors                     | 1e-09    |"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>| solver                         | Solver used for training                         | adagrad  |</pre>"
+      ],
+      "text/plain": [
+       "| solver                         | Solver used for training                         | adagrad  |"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>| linear_regularization          | L2 Regularization on Linear Coefficients         | 1e-09    |</pre>"
+      ],
+      "text/plain": [
+       "| linear_regularization          | L2 Regularization on Linear Coefficients         | 1e-09    |"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>| ranking_regularization         | Rank-based Regularization Weight                 | 0.25     |</pre>"
+      ],
+      "text/plain": [
+       "| ranking_regularization         | Rank-based Regularization Weight                 | 0.25     |"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>| max_iterations                 | Maximum Number of Iterations                     | 25       |</pre>"
+      ],
+      "text/plain": [
+       "| max_iterations                 | Maximum Number of Iterations                     | 25       |"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>+--------------------------------+--------------------------------------------------+----------+</pre>"
+      ],
+      "text/plain": [
+       "+--------------------------------+--------------------------------------------------+----------+"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>  Optimizing model using SGD; tuning step size.</pre>"
+      ],
+      "text/plain": [
+       "  Optimizing model using SGD; tuning step size."
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>  Using 2496276 / 19970212 points for tuning the step size.</pre>"
+      ],
+      "text/plain": [
+       "  Using 2496276 / 19970212 points for tuning the step size."
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>+---------+-------------------+------------------------------------------+</pre>"
+      ],
+      "text/plain": [
+       "+---------+-------------------+------------------------------------------+"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>| Attempt | Initial Step Size | Estimated Objective Value                |</pre>"
+      ],
+      "text/plain": [
+       "| Attempt | Initial Step Size | Estimated Objective Value                |"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>+---------+-------------------+------------------------------------------+</pre>"
+      ],
+      "text/plain": [
+       "+---------+-------------------+------------------------------------------+"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>| 0       | 16.6667           | Not Viable                               |</pre>"
+      ],
+      "text/plain": [
+       "| 0       | 16.6667           | Not Viable                               |"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>| 1       | 4.16667           | Not Viable                               |</pre>"
+      ],
+      "text/plain": [
+       "| 1       | 4.16667           | Not Viable                               |"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>| 2       | 1.04167           | Not Viable                               |</pre>"
+      ],
+      "text/plain": [
+       "| 2       | 1.04167           | Not Viable                               |"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>| 3       | 0.260417          | Not Viable                               |</pre>"
+      ],
+      "text/plain": [
+       "| 3       | 0.260417          | Not Viable                               |"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>| 4       | 0.0651042         | 1.60873                                  |</pre>"
+      ],
+      "text/plain": [
+       "| 4       | 0.0651042         | 1.60873                                  |"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>| 5       | 0.0325521         | 1.3989                                   |</pre>"
+      ],
+      "text/plain": [
+       "| 5       | 0.0325521         | 1.3989                                   |"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>| 6       | 0.016276          | 1.37332                                  |</pre>"
+      ],
+      "text/plain": [
+       "| 6       | 0.016276          | 1.37332                                  |"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>| 7       | 0.00813802        | 1.4811                                   |</pre>"
+      ],
+      "text/plain": [
+       "| 7       | 0.00813802        | 1.4811                                   |"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>| 8       | 0.00406901        | 1.78626                                  |</pre>"
+      ],
+      "text/plain": [
+       "| 8       | 0.00406901        | 1.78626                                  |"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>| 9       | 0.00203451        | 1.85744                                  |</pre>"
+      ],
+      "text/plain": [
+       "| 9       | 0.00203451        | 1.85744                                  |"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>+---------+-------------------+------------------------------------------+</pre>"
+      ],
+      "text/plain": [
+       "+---------+-------------------+------------------------------------------+"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>| Final   | 0.016276          | 1.37332                                  |</pre>"
+      ],
+      "text/plain": [
+       "| Final   | 0.016276          | 1.37332                                  |"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>+---------+-------------------+------------------------------------------+</pre>"
+      ],
+      "text/plain": [
+       "+---------+-------------------+------------------------------------------+"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>Starting Optimization.</pre>"
+      ],
+      "text/plain": [
+       "Starting Optimization."
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>+---------+--------------+-------------------+-----------------------+-------------+</pre>"
+      ],
+      "text/plain": [
+       "+---------+--------------+-------------------+-----------------------+-------------+"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>| Iter.   | Elapsed Time | Approx. Objective | Approx. Training RMSE | Step Size   |</pre>"
+      ],
+      "text/plain": [
+       "| Iter.   | Elapsed Time | Approx. Objective | Approx. Training RMSE | Step Size   |"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>+---------+--------------+-------------------+-----------------------+-------------+</pre>"
+      ],
+      "text/plain": [
+       "+---------+--------------+-------------------+-----------------------+-------------+"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>| Initial | 146us        | 2.16985           | 1.05199               |             |</pre>"
+      ],
+      "text/plain": [
+       "| Initial | 146us        | 2.16985           | 1.05199               |             |"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>+---------+--------------+-------------------+-----------------------+-------------+</pre>"
+      ],
+      "text/plain": [
+       "+---------+--------------+-------------------+-----------------------+-------------+"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>| 1       | 13.39s       | 1.4181            | 0.972697              | 0.016276    |</pre>"
+      ],
+      "text/plain": [
+       "| 1       | 13.39s       | 1.4181            | 0.972697              | 0.016276    |"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>| 2       | 29.43s       | 1.33835           | 0.960306              | 0.016276    |</pre>"
+      ],
+      "text/plain": [
+       "| 2       | 29.43s       | 1.33835           | 0.960306              | 0.016276    |"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>| 3       | 46.79s       | 1.27757           | 0.948374              | 0.016276    |</pre>"
+      ],
+      "text/plain": [
+       "| 3       | 46.79s       | 1.27757           | 0.948374              | 0.016276    |"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>| 4       | 1m 8s        | 1.2601            | 0.947031              | 0.016276    |</pre>"
+      ],
+      "text/plain": [
+       "| 4       | 1m 8s        | 1.2601            | 0.947031              | 0.016276    |"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>| 5       | 1m 27s       | 1.24885           | 0.945995              | 0.016276    |</pre>"
+      ],
+      "text/plain": [
+       "| 5       | 1m 27s       | 1.24885           | 0.945995              | 0.016276    |"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>| 7       | 2m 3s        | 1.23486           | 0.94448               | 0.016276    |</pre>"
+      ],
+      "text/plain": [
+       "| 7       | 2m 3s        | 1.23486           | 0.94448               | 0.016276    |"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>| 8       | 2m 18s       | 1.23023           | 0.943533              | 0.016276    |</pre>"
+      ],
+      "text/plain": [
+       "| 8       | 2m 18s       | 1.23023           | 0.943533              | 0.016276    |"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>| 9       | 2m 35s       | 1.22626           | 0.94307               | 0.016276    |</pre>"
+      ],
+      "text/plain": [
+       "| 9       | 2m 35s       | 1.22626           | 0.94307               | 0.016276    |"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>| 10      | 2m 52s       | 1.22306           | 0.942716              | 0.016276    |</pre>"
+      ],
+      "text/plain": [
+       "| 10      | 2m 52s       | 1.22306           | 0.942716              | 0.016276    |"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>| 11      | 3m 10s       | 1.22028           | 0.942255              | 0.016276    |</pre>"
+      ],
+      "text/plain": [
+       "| 11      | 3m 10s       | 1.22028           | 0.942255              | 0.016276    |"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>| 12      | 3m 28s       | 1.21776           | 0.941998              | 0.016276    |</pre>"
+      ],
+      "text/plain": [
+       "| 12      | 3m 28s       | 1.21776           | 0.941998              | 0.016276    |"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>| 13      | 3m 44s       | 1.21596           | 0.94144               | 0.016276    |</pre>"
+      ],
+      "text/plain": [
+       "| 13      | 3m 44s       | 1.21596           | 0.94144               | 0.016276    |"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>| 14      | 3m 59s       | 1.2143            | 0.941333              | 0.016276    |</pre>"
+      ],
+      "text/plain": [
+       "| 14      | 3m 59s       | 1.2143            | 0.941333              | 0.016276    |"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>| 15      | 4m 15s       | 1.21254           | 0.94109               | 0.016276    |</pre>"
+      ],
+      "text/plain": [
+       "| 15      | 4m 15s       | 1.21254           | 0.94109               | 0.016276    |"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>| 16      | 4m 31s       | 1.21114           | 0.94096               | 0.016276    |</pre>"
+      ],
+      "text/plain": [
+       "| 16      | 4m 31s       | 1.21114           | 0.94096               | 0.016276    |"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>| 17      | 4m 46s       | 1.20978           | 0.940582              | 0.016276    |</pre>"
+      ],
+      "text/plain": [
+       "| 17      | 4m 46s       | 1.20978           | 0.940582              | 0.016276    |"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>| 18      | 5m 2s        | 1.2088            | 0.940525              | 0.016276    |</pre>"
+      ],
+      "text/plain": [
+       "| 18      | 5m 2s        | 1.2088            | 0.940525              | 0.016276    |"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>| 19      | 5m 18s       | 1.20769           | 0.940265              | 0.016276    |</pre>"
+      ],
+      "text/plain": [
+       "| 19      | 5m 18s       | 1.20769           | 0.940265              | 0.016276    |"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>| 20      | 5m 33s       | 1.20689           | 0.940221              | 0.016276    |</pre>"
+      ],
+      "text/plain": [
+       "| 20      | 5m 33s       | 1.20689           | 0.940221              | 0.016276    |"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>| 21      | 5m 49s       | 1.20609           | 0.940129              | 0.016276    |</pre>"
+      ],
+      "text/plain": [
+       "| 21      | 5m 49s       | 1.20609           | 0.940129              | 0.016276    |"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>| 22      | 6m 4s        | 1.20516           | 0.940011              | 0.016276    |</pre>"
+      ],
+      "text/plain": [
+       "| 22      | 6m 4s        | 1.20516           | 0.940011              | 0.016276    |"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>| 23      | 6m 19s       | 1.20459           | 0.939922              | 0.016276    |</pre>"
+      ],
+      "text/plain": [
+       "| 23      | 6m 19s       | 1.20459           | 0.939922              | 0.016276    |"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>| 24      | 6m 34s       | 1.20415           | 0.93966               | 0.016276    |</pre>"
+      ],
+      "text/plain": [
+       "| 24      | 6m 34s       | 1.20415           | 0.93966               | 0.016276    |"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>| 25      | 6m 49s       | 1.20328           | 0.939797              | 0.016276    |</pre>"
+      ],
+      "text/plain": [
+       "| 25      | 6m 49s       | 1.20328           | 0.939797              | 0.016276    |"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>+---------+--------------+-------------------+-----------------------+-------------+</pre>"
+      ],
+      "text/plain": [
+       "+---------+--------------+-------------------+-----------------------+-------------+"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>Optimization Complete: Maximum number of passes through the data reached.</pre>"
+      ],
+      "text/plain": [
+       "Optimization Complete: Maximum number of passes through the data reached."
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>Computing final objective value and training RMSE.</pre>"
+      ],
+      "text/plain": [
+       "Computing final objective value and training RMSE."
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>       Final objective value: 1.20071</pre>"
+      ],
+      "text/plain": [
+       "       Final objective value: 1.20071"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>       Final training RMSE: 0.935151</pre>"
+      ],
+      "text/plain": [
+       "       Final training RMSE: 0.935151"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "training_data, validation_data = tc.recommender.util.random_split_by_user(actions, 'userId', 'movieId')\n",
+    "model = tc.recommender.create(training_data, user_id='userId', item_id='movieId',target='rating')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 29,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2020-08-03T07:17:32.680352Z",
+     "start_time": "2020-08-03T07:15:58.091285Z"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 1000/138493 queries. users per second: 1608.53</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 1000/138493 queries. users per second: 1608.53"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 2000/138493 queries. users per second: 1585.01</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 2000/138493 queries. users per second: 1585.01"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 3000/138493 queries. users per second: 1600.82</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 3000/138493 queries. users per second: 1600.82"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 4000/138493 queries. users per second: 1632.23</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 4000/138493 queries. users per second: 1632.23"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 5000/138493 queries. users per second: 1642.62</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 5000/138493 queries. users per second: 1642.62"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 6000/138493 queries. users per second: 1655.37</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 6000/138493 queries. users per second: 1655.37"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 7000/138493 queries. users per second: 1647.95</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 7000/138493 queries. users per second: 1647.95"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 8000/138493 queries. users per second: 1659.43</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 8000/138493 queries. users per second: 1659.43"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 9000/138493 queries. users per second: 1663.43</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 9000/138493 queries. users per second: 1663.43"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 10000/138493 queries. users per second: 1665.23</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 10000/138493 queries. users per second: 1665.23"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 11000/138493 queries. users per second: 1671.8</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 11000/138493 queries. users per second: 1671.8"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 12000/138493 queries. users per second: 1674.2</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 12000/138493 queries. users per second: 1674.2"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 13000/138493 queries. users per second: 1679.39</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 13000/138493 queries. users per second: 1679.39"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 14000/138493 queries. users per second: 1677.13</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 14000/138493 queries. users per second: 1677.13"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 15000/138493 queries. users per second: 1682.43</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 15000/138493 queries. users per second: 1682.43"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 16000/138493 queries. users per second: 1682.39</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 16000/138493 queries. users per second: 1682.39"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 17000/138493 queries. users per second: 1683.45</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 17000/138493 queries. users per second: 1683.45"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 18000/138493 queries. users per second: 1677.98</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 18000/138493 queries. users per second: 1677.98"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 19000/138493 queries. users per second: 1669.04</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 19000/138493 queries. users per second: 1669.04"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 20000/138493 queries. users per second: 1656.73</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 20000/138493 queries. users per second: 1656.73"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 21000/138493 queries. users per second: 1652.34</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 21000/138493 queries. users per second: 1652.34"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 22000/138493 queries. users per second: 1649.28</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 22000/138493 queries. users per second: 1649.28"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 23000/138493 queries. users per second: 1646.05</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 23000/138493 queries. users per second: 1646.05"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 24000/138493 queries. users per second: 1643.25</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 24000/138493 queries. users per second: 1643.25"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 25000/138493 queries. users per second: 1642.02</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 25000/138493 queries. users per second: 1642.02"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 26000/138493 queries. users per second: 1639.26</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 26000/138493 queries. users per second: 1639.26"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 27000/138493 queries. users per second: 1632.7</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 27000/138493 queries. users per second: 1632.7"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 28000/138493 queries. users per second: 1631.3</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 28000/138493 queries. users per second: 1631.3"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 29000/138493 queries. users per second: 1629.09</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 29000/138493 queries. users per second: 1629.09"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 30000/138493 queries. users per second: 1622.98</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 30000/138493 queries. users per second: 1622.98"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 31000/138493 queries. users per second: 1619.54</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 31000/138493 queries. users per second: 1619.54"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 32000/138493 queries. users per second: 1617.05</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 32000/138493 queries. users per second: 1617.05"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 33000/138493 queries. users per second: 1616.58</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 33000/138493 queries. users per second: 1616.58"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 34000/138493 queries. users per second: 1614.79</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 34000/138493 queries. users per second: 1614.79"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 35000/138493 queries. users per second: 1613.59</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 35000/138493 queries. users per second: 1613.59"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 36000/138493 queries. users per second: 1610.38</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 36000/138493 queries. users per second: 1610.38"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 37000/138493 queries. users per second: 1608.12</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 37000/138493 queries. users per second: 1608.12"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 38000/138493 queries. users per second: 1604.65</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 38000/138493 queries. users per second: 1604.65"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 39000/138493 queries. users per second: 1598.76</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 39000/138493 queries. users per second: 1598.76"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 40000/138493 queries. users per second: 1593.64</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 40000/138493 queries. users per second: 1593.64"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 41000/138493 queries. users per second: 1591.41</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 41000/138493 queries. users per second: 1591.41"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 42000/138493 queries. users per second: 1589.69</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 42000/138493 queries. users per second: 1589.69"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 43000/138493 queries. users per second: 1588.98</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 43000/138493 queries. users per second: 1588.98"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 44000/138493 queries. users per second: 1588.72</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 44000/138493 queries. users per second: 1588.72"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 45000/138493 queries. users per second: 1586.06</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 45000/138493 queries. users per second: 1586.06"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 46000/138493 queries. users per second: 1585.93</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 46000/138493 queries. users per second: 1585.93"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 47000/138493 queries. users per second: 1584.7</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 47000/138493 queries. users per second: 1584.7"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 48000/138493 queries. users per second: 1583.98</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 48000/138493 queries. users per second: 1583.98"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 49000/138493 queries. users per second: 1583.77</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 49000/138493 queries. users per second: 1583.77"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 50000/138493 queries. users per second: 1582.58</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 50000/138493 queries. users per second: 1582.58"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 51000/138493 queries. users per second: 1581.72</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 51000/138493 queries. users per second: 1581.72"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 52000/138493 queries. users per second: 1579.11</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 52000/138493 queries. users per second: 1579.11"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 53000/138493 queries. users per second: 1577.35</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 53000/138493 queries. users per second: 1577.35"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 54000/138493 queries. users per second: 1576.83</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 54000/138493 queries. users per second: 1576.83"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 55000/138493 queries. users per second: 1575.2</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 55000/138493 queries. users per second: 1575.2"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 56000/138493 queries. users per second: 1572.43</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 56000/138493 queries. users per second: 1572.43"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 57000/138493 queries. users per second: 1570.65</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 57000/138493 queries. users per second: 1570.65"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 58000/138493 queries. users per second: 1569.94</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 58000/138493 queries. users per second: 1569.94"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 59000/138493 queries. users per second: 1567.8</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 59000/138493 queries. users per second: 1567.8"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 60000/138493 queries. users per second: 1565.99</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 60000/138493 queries. users per second: 1565.99"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 61000/138493 queries. users per second: 1565.6</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 61000/138493 queries. users per second: 1565.6"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 62000/138493 queries. users per second: 1564.39</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 62000/138493 queries. users per second: 1564.39"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 63000/138493 queries. users per second: 1563.66</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 63000/138493 queries. users per second: 1563.66"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 64000/138493 queries. users per second: 1562.83</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 64000/138493 queries. users per second: 1562.83"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 65000/138493 queries. users per second: 1562</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 65000/138493 queries. users per second: 1562"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 66000/138493 queries. users per second: 1561.26</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 66000/138493 queries. users per second: 1561.26"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 67000/138493 queries. users per second: 1560.16</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 67000/138493 queries. users per second: 1560.16"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 68000/138493 queries. users per second: 1559.3</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 68000/138493 queries. users per second: 1559.3"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 69000/138493 queries. users per second: 1558.06</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 69000/138493 queries. users per second: 1558.06"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 70000/138493 queries. users per second: 1556.8</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 70000/138493 queries. users per second: 1556.8"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 71000/138493 queries. users per second: 1555.2</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 71000/138493 queries. users per second: 1555.2"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 72000/138493 queries. users per second: 1552.83</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 72000/138493 queries. users per second: 1552.83"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 73000/138493 queries. users per second: 1552.29</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 73000/138493 queries. users per second: 1552.29"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 74000/138493 queries. users per second: 1551.67</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 74000/138493 queries. users per second: 1551.67"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 75000/138493 queries. users per second: 1549.29</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 75000/138493 queries. users per second: 1549.29"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 76000/138493 queries. users per second: 1548.73</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 76000/138493 queries. users per second: 1548.73"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 77000/138493 queries. users per second: 1547.06</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 77000/138493 queries. users per second: 1547.06"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 78000/138493 queries. users per second: 1546.25</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 78000/138493 queries. users per second: 1546.25"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 79000/138493 queries. users per second: 1545.44</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 79000/138493 queries. users per second: 1545.44"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 80000/138493 queries. users per second: 1545</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 80000/138493 queries. users per second: 1545"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 81000/138493 queries. users per second: 1542.58</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 81000/138493 queries. users per second: 1542.58"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 82000/138493 queries. users per second: 1538.71</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 82000/138493 queries. users per second: 1538.71"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 83000/138493 queries. users per second: 1535.56</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 83000/138493 queries. users per second: 1535.56"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 84000/138493 queries. users per second: 1532.14</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 84000/138493 queries. users per second: 1532.14"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 85000/138493 queries. users per second: 1530.06</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 85000/138493 queries. users per second: 1530.06"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 86000/138493 queries. users per second: 1526.61</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 86000/138493 queries. users per second: 1526.61"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 87000/138493 queries. users per second: 1524.4</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 87000/138493 queries. users per second: 1524.4"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 88000/138493 queries. users per second: 1522.26</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 88000/138493 queries. users per second: 1522.26"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 89000/138493 queries. users per second: 1519.48</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 89000/138493 queries. users per second: 1519.48"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 90000/138493 queries. users per second: 1518.11</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 90000/138493 queries. users per second: 1518.11"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 91000/138493 queries. users per second: 1516.45</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 91000/138493 queries. users per second: 1516.45"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 92000/138493 queries. users per second: 1512.58</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 92000/138493 queries. users per second: 1512.58"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 93000/138493 queries. users per second: 1507.97</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 93000/138493 queries. users per second: 1507.97"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 94000/138493 queries. users per second: 1506.24</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 94000/138493 queries. users per second: 1506.24"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 95000/138493 queries. users per second: 1503.15</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 95000/138493 queries. users per second: 1503.15"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 96000/138493 queries. users per second: 1501.47</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 96000/138493 queries. users per second: 1501.47"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 97000/138493 queries. users per second: 1500.18</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 97000/138493 queries. users per second: 1500.18"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 98000/138493 queries. users per second: 1499.45</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 98000/138493 queries. users per second: 1499.45"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 99000/138493 queries. users per second: 1497.46</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 99000/138493 queries. users per second: 1497.46"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 100000/138493 queries. users per second: 1496.09</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 100000/138493 queries. users per second: 1496.09"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 101000/138493 queries. users per second: 1495.41</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 101000/138493 queries. users per second: 1495.41"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 102000/138493 queries. users per second: 1495.26</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 102000/138493 queries. users per second: 1495.26"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 103000/138493 queries. users per second: 1493.69</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 103000/138493 queries. users per second: 1493.69"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 104000/138493 queries. users per second: 1492.71</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 104000/138493 queries. users per second: 1492.71"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 105000/138493 queries. users per second: 1491.36</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 105000/138493 queries. users per second: 1491.36"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 106000/138493 queries. users per second: 1490.31</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 106000/138493 queries. users per second: 1490.31"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 107000/138493 queries. users per second: 1489.53</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 107000/138493 queries. users per second: 1489.53"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 108000/138493 queries. users per second: 1488.3</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 108000/138493 queries. users per second: 1488.3"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 109000/138493 queries. users per second: 1487.31</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 109000/138493 queries. users per second: 1487.31"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 110000/138493 queries. users per second: 1486.41</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 110000/138493 queries. users per second: 1486.41"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 111000/138493 queries. users per second: 1485.76</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 111000/138493 queries. users per second: 1485.76"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 112000/138493 queries. users per second: 1484.91</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 112000/138493 queries. users per second: 1484.91"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 113000/138493 queries. users per second: 1483.82</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 113000/138493 queries. users per second: 1483.82"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 114000/138493 queries. users per second: 1482.64</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 114000/138493 queries. users per second: 1482.64"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 115000/138493 queries. users per second: 1481.84</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 115000/138493 queries. users per second: 1481.84"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 116000/138493 queries. users per second: 1480.88</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 116000/138493 queries. users per second: 1480.88"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 117000/138493 queries. users per second: 1479.68</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 117000/138493 queries. users per second: 1479.68"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 118000/138493 queries. users per second: 1478.41</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 118000/138493 queries. users per second: 1478.41"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 119000/138493 queries. users per second: 1477.93</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 119000/138493 queries. users per second: 1477.93"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 120000/138493 queries. users per second: 1477.13</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 120000/138493 queries. users per second: 1477.13"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 121000/138493 queries. users per second: 1476.49</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 121000/138493 queries. users per second: 1476.49"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 122000/138493 queries. users per second: 1476.19</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 122000/138493 queries. users per second: 1476.19"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 123000/138493 queries. users per second: 1475.89</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 123000/138493 queries. users per second: 1475.89"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 124000/138493 queries. users per second: 1475.31</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 124000/138493 queries. users per second: 1475.31"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 125000/138493 queries. users per second: 1474.64</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 125000/138493 queries. users per second: 1474.64"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 126000/138493 queries. users per second: 1474.34</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 126000/138493 queries. users per second: 1474.34"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 127000/138493 queries. users per second: 1473.79</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 127000/138493 queries. users per second: 1473.79"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 128000/138493 queries. users per second: 1473.42</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 128000/138493 queries. users per second: 1473.42"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 129000/138493 queries. users per second: 1472.53</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 129000/138493 queries. users per second: 1472.53"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 130000/138493 queries. users per second: 1471.73</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 130000/138493 queries. users per second: 1471.73"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 131000/138493 queries. users per second: 1471.15</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 131000/138493 queries. users per second: 1471.15"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 132000/138493 queries. users per second: 1470.84</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 132000/138493 queries. users per second: 1470.84"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 133000/138493 queries. users per second: 1470.11</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 133000/138493 queries. users per second: 1470.11"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 134000/138493 queries. users per second: 1469.09</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 134000/138493 queries. users per second: 1469.09"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 135000/138493 queries. users per second: 1468.77</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 135000/138493 queries. users per second: 1468.77"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 136000/138493 queries. users per second: 1467.9</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 136000/138493 queries. users per second: 1467.9"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 137000/138493 queries. users per second: 1467.87</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 137000/138493 queries. users per second: 1467.87"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre>recommendations finished on 138000/138493 queries. users per second: 1467.03</pre>"
+      ],
+      "text/plain": [
+       "recommendations finished on 138000/138493 queries. users per second: 1467.03"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<div style=\"max-height:1000px;max-width:1500px;overflow:auto;\"><table frame=\"box\" rules=\"cols\">\n",
+       "    <tr>\n",
+       "        <th style=\"padding-left: 1em; padding-right: 1em; text-align: center\">userId</th>\n",
+       "        <th style=\"padding-left: 1em; padding-right: 1em; text-align: center\">movieId</th>\n",
+       "        <th style=\"padding-left: 1em; padding-right: 1em; text-align: center\">score</th>\n",
+       "        <th style=\"padding-left: 1em; padding-right: 1em; text-align: center\">rank</th>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">1</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">858</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">4.754360992005779</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">1</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">527</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">4.699528006381108</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">1</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">1221</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">4.630036124503924</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">3</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">1</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">912</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">4.606022497183396</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">4</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">1</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">750</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">4.596429159409119</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">5</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">2</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">318</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">5.353144763629636</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">2</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">50</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">5.231041960020768</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">2</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">858</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">5.220728031020364</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">3</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">2</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">527</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">5.173715061692739</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">4</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">2</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">296</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">5.106804625024772</td>\n",
+       "        <td style=\"padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top\">5</td>\n",
+       "    </tr>\n",
+       "</table>\n",
+       "[692465 rows x 4 columns]<br/>Note: Only the head of the SFrame is printed.<br/>You can use print_rows(num_rows=m, num_columns=n) to print more rows and columns.\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "Columns:\n",
+       "\tuserId\tint\n",
+       "\tmovieId\tint\n",
+       "\tscore\tfloat\n",
+       "\trank\tint\n",
+       "\n",
+       "Rows: 692465\n",
+       "\n",
+       "Data:\n",
+       "+--------+---------+-------------------+------+\n",
+       "| userId | movieId |       score       | rank |\n",
+       "+--------+---------+-------------------+------+\n",
+       "|   1    |   858   | 4.754360992005779 |  1   |\n",
+       "|   1    |   527   | 4.699528006381108 |  2   |\n",
+       "|   1    |   1221  | 4.630036124503924 |  3   |\n",
+       "|   1    |   912   | 4.606022497183396 |  4   |\n",
+       "|   1    |   750   | 4.596429159409119 |  5   |\n",
+       "|   2    |   318   | 5.353144763629636 |  1   |\n",
+       "|   2    |    50   | 5.231041960020768 |  2   |\n",
+       "|   2    |   858   | 5.220728031020364 |  3   |\n",
+       "|   2    |   527   | 5.173715061692739 |  4   |\n",
+       "|   2    |   296   | 5.106804625024772 |  5   |\n",
+       "+--------+---------+-------------------+------+\n",
+       "[692465 rows x 4 columns]\n",
+       "Note: Only the head of the SFrame is printed.\n",
+       "You can use print_rows(num_rows=m, num_columns=n) to print more rows and columns."
+      ]
+     },
+     "execution_count": 29,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "results = model.recommend(users=None, k=5)\n",
+    "results"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 31,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2020-08-03T07:20:34.923785Z",
+     "start_time": "2020-08-03T07:20:13.118173Z"
+    }
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "+--------+---------+--------------------------------+------+\n",
+      "| userId | movieId |             title              | rank |\n",
+      "+--------+---------+--------------------------------+------+\n",
+      "|   1    |   858   |     Godfather, The (1972)      |  1   |\n",
+      "|   1    |   527   |    Schindler's List (1993)     |  2   |\n",
+      "|   1    |   1221  | Godfather: Part II, The (1974) |  3   |\n",
+      "|   1    |   912   |       Casablanca (1942)        |  4   |\n",
+      "|   1    |   750   | Dr. Strangelove or: How I ...  |  5   |\n",
+      "|   2    |   318   | Shawshank Redemption, The ...  |  1   |\n",
+      "|   2    |    50   |   Usual Suspects, The (1995)   |  2   |\n",
+      "|   2    |   858   |     Godfather, The (1972)      |  3   |\n",
+      "|   2    |   527   |    Schindler's List (1993)     |  4   |\n",
+      "|   2    |   296   |      Pulp Fiction (1994)       |  5   |\n",
+      "+--------+---------+--------------------------------+------+\n",
+      "[692465 rows x 4 columns]\n",
+      "Note: Only the head of the SFrame is printed.\n",
+      "You can use print_rows(num_rows=m, num_columns=n) to print more rows and columns.\n",
+      "+--------+---------+--------+------------+-------------------------------+\n",
+      "| userId | movieId | rating | timestamp  |             title             |\n",
+      "+--------+---------+--------+------------+-------------------------------+\n",
+      "|   1    |    2    |  3.5   | 1112486027 |         Jumanji (1995)        |\n",
+      "|   1    |    29   |  3.5   | 1112484676 | City of Lost Children, The... |\n",
+      "|   1    |    32   |  3.5   | 1112484819 | Twelve Monkeys (a.k.a. 12 ... |\n",
+      "|   1    |    47   |  3.5   | 1112484727 |  Seven (a.k.a. Se7en) (1995)  |\n",
+      "|   1    |    50   |  3.5   | 1112484580 |   Usual Suspects, The (1995)  |\n",
+      "|   1    |   112   |  3.5   | 1094785740 | Rumble in the Bronx (Hont ... |\n",
+      "|   1    |   151   |  4.0   | 1094785734 |         Rob Roy (1995)        |\n",
+      "|   1    |   223   |  4.0   | 1112485573 |         Clerks (1994)         |\n",
+      "|   1    |   253   |  4.0   | 1112484940 | Interview with the Vampire... |\n",
+      "|   1    |   260   |  4.0   | 1112484826 | Star Wars: Episode IV - A ... |\n",
+      "+--------+---------+--------+------------+-------------------------------+\n",
+      "+-------------------------------+\n",
+      "|             genres            |\n",
+      "+-------------------------------+\n",
+      "|   Adventure|Children|Fantasy  |\n",
+      "| Adventure|Drama|Fantasy|My... |\n",
+      "|    Mystery|Sci-Fi|Thriller    |\n",
+      "|        Mystery|Thriller       |\n",
+      "|     Crime|Mystery|Thriller    |\n",
+      "| Action|Adventure|Comedy|Crime |\n",
+      "|    Action|Drama|Romance|War   |\n",
+      "|             Comedy            |\n",
+      "|          Drama|Horror         |\n",
+      "|    Action|Adventure|Sci-Fi    |\n",
+      "+-------------------------------+\n",
+      "[175 rows x 6 columns]\n",
+      "Note: Only the head of the SFrame is printed.\n",
+      "You can use print_rows(num_rows=m, num_columns=n) to print more rows and columns.\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(results.join(items,how='inner')['userId','movieId','title','rank'])\n",
+    "print(actions[actions.join(items,how='inner')['userId']==1].join(items,how='inner'))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 40,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2020-08-03T07:25:39.371956Z",
+     "start_time": "2020-08-03T07:25:38.743675Z"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<pre>Materializing SArray</pre>"
+      ],
+      "text/plain": [
+       "Materializing SArray"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<html>                 <body>                     <iframe style=\"border:0;margin:0\" width=\"920\" height=\"770\" srcdoc='<html lang=\"en\">                         <head>                             <script src=\"https://cdnjs.cloudflare.com/ajax/libs/vega/5.4.0/vega.js\"></script>                             <script src=\"https://cdnjs.cloudflare.com/ajax/libs/vega-embed/4.0.0/vega-embed.js\"></script>                             <script src=\"https://cdnjs.cloudflare.com/ajax/libs/vega-tooltip/0.5.1/vega-tooltip.min.js\"></script>                             <link rel=\"stylesheet\" type=\"text/css\" href=\"https://cdnjs.cloudflare.com/ajax/libs/vega-tooltip/0.5.1/vega-tooltip.min.css\">                             <style>                             .vega-actions > a{                                 color:white;                                 text-decoration: none;                                 font-family: \"Arial\";                                 cursor:pointer;                                 padding:5px;                                 background:#AAAAAA;                                 border-radius:4px;                                 padding-left:10px;                                 padding-right:10px;                                 margin-right:5px;                             }                             .vega-actions{                                 margin-top:20px;                                 text-align:center                             }                            .vega-actions > a{                                 background:#999999;                            }                             </style>                         </head>                         <body>                             <div id=\"vis\">                             </div>                             <script>                                 var vega_json = \"{\\\"$schema\\\": \\\"https://vega.github.io/schema/vega/v4.json\\\", \\\"description\\\": \\\"A simple bar chart with embedded data.\\\", \\\"autosize\\\": {\\\"type\\\": \\\"fit\\\", \\\"resize\\\": false, \\\"contains\\\": \\\"padding\\\"}, \\\"width\\\": 720, \\\"height\\\": 550, \\\"padding\\\": 8, \\\"title\\\": \\\"Distribution of Values [float]\\\", \\\"style\\\": \\\"cell\\\", \\\"signals\\\": [{\\\"name\\\": \\\"bins\\\", \\\"update\\\": \\\"data(\\\\\\\"bins_data\\\\\\\")[0]\\\"}, {\\\"name\\\": \\\"binCount\\\", \\\"update\\\": \\\"(bins.stop - bins.start) / bins.step\\\"}, {\\\"name\\\": \\\"nullGap\\\", \\\"update\\\": \\\"data(\\\\\\\"nulls\\\\\\\").length ? 10 : 0\\\"}, {\\\"name\\\": \\\"barStep\\\", \\\"update\\\": \\\"(width - nullGap) / (1 + binCount)\\\"}], \\\"data\\\": [{\\\"name\\\": \\\"source_2\\\", \\\"values\\\": [{\\\"left\\\": 0.5, \\\"right\\\": 0.7288, \\\"count\\\": 101}, {\\\"left\\\": 0.7288, \\\"right\\\": 0.9576, \\\"count\\\": 0}, {\\\"left\\\": 0.9576, \\\"right\\\": 1.1864, \\\"count\\\": 173}, {\\\"left\\\": 1.1864, \\\"right\\\": 1.4152, \\\"count\\\": 0}, {\\\"left\\\": 1.4152, \\\"right\\\": 1.644, \\\"count\\\": 97}, {\\\"left\\\": 1.644, \\\"right\\\": 1.8728, \\\"count\\\": 0}, {\\\"left\\\": 1.8728, \\\"right\\\": 2.1016, \\\"count\\\": 456}, {\\\"left\\\": 2.1016, \\\"right\\\": 2.3304, \\\"count\\\": 0}, {\\\"left\\\": 2.3304, \\\"right\\\": 2.5592, \\\"count\\\": 360}, {\\\"left\\\": 2.5592, \\\"right\\\": 2.788, \\\"count\\\": 0}, {\\\"left\\\": 2.788, \\\"right\\\": 3.0168, \\\"count\\\": 0}, {\\\"left\\\": 3.0168, \\\"right\\\": 3.2456, \\\"count\\\": 1992}, {\\\"left\\\": 3.2456, \\\"right\\\": 3.4744, \\\"count\\\": 0}, {\\\"left\\\": 3.4744, \\\"right\\\": 3.7032, \\\"count\\\": 1581}, {\\\"left\\\": 3.7032, \\\"right\\\": 3.932, \\\"count\\\": 0}, {\\\"left\\\": 3.932, \\\"right\\\": 4.1608, \\\"count\\\": 5823}, {\\\"left\\\": 4.1608, \\\"right\\\": 4.3896, \\\"count\\\": 0}, {\\\"left\\\": 4.3896, \\\"right\\\": 4.6184, \\\"count\\\": 3091}, {\\\"left\\\": 4.6184, \\\"right\\\": 4.8472, \\\"count\\\": 0}, {\\\"left\\\": 4.8472, \\\"right\\\": 5.076, \\\"count\\\": 9546}, {\\\"start\\\": 0.5, \\\"stop\\\": 5.076, \\\"step\\\": 0.2288}]}, {\\\"name\\\": \\\"counts\\\", \\\"source\\\": \\\"source_2\\\", \\\"transform\\\": [{\\\"type\\\": \\\"filter\\\", \\\"expr\\\": \\\"datum[\\\\\\\"missing\\\\\\\"] !== true &amp;&amp; datum[\\\\\\\"count\\\\\\\"] != null\\\"}]}, {\\\"name\\\": \\\"nulls\\\", \\\"source\\\": \\\"source_2\\\", \\\"transform\\\": [{\\\"expr\\\": \\\"datum[\\\\\\\"missing\\\\\\\"] === true &amp;&amp; datum[\\\\\\\"count\\\\\\\"] != null\\\", \\\"type\\\": \\\"filter\\\"}]}, {\\\"name\\\": \\\"bins_data\\\", \\\"source\\\": \\\"source_2\\\", \\\"transform\\\": [{\\\"expr\\\": \\\"datum[\\\\\\\"start\\\\\\\"] != null &amp;&amp; datum[\\\\\\\"stop\\\\\\\"] != null &amp;&amp; datum[\\\\\\\"step\\\\\\\"] != null\\\", \\\"type\\\": \\\"filter\\\"}]}], \\\"marks\\\": [{\\\"type\\\": \\\"rect\\\", \\\"from\\\": {\\\"data\\\": \\\"counts\\\"}, \\\"encode\\\": {\\\"update\\\": {\\\"x\\\": {\\\"scale\\\": \\\"xscale\\\", \\\"field\\\": \\\"left\\\", \\\"offset\\\": 1}, \\\"x2\\\": {\\\"scale\\\": \\\"xscale\\\", \\\"field\\\": \\\"right\\\"}, \\\"y\\\": {\\\"scale\\\": \\\"yscale\\\", \\\"field\\\": \\\"count\\\"}, \\\"y2\\\": {\\\"scale\\\": \\\"yscale\\\", \\\"value\\\": 0}, \\\"fill\\\": {\\\"value\\\": \\\"#108EE9\\\"}}, \\\"hover\\\": {\\\"fill\\\": {\\\"value\\\": \\\"#7EC2F3\\\"}}}}, {\\\"type\\\": \\\"rect\\\", \\\"from\\\": {\\\"data\\\": \\\"nulls\\\"}, \\\"encode\\\": {\\\"update\\\": {\\\"x\\\": {\\\"scale\\\": \\\"xscale-null\\\", \\\"value\\\": null, \\\"offset\\\": 1}, \\\"x2\\\": {\\\"scale\\\": \\\"xscale-null\\\", \\\"band\\\": 1}, \\\"y\\\": {\\\"scale\\\": \\\"yscale\\\", \\\"field\\\": \\\"count\\\"}, \\\"y2\\\": {\\\"scale\\\": \\\"yscale\\\", \\\"value\\\": 0}, \\\"fill\\\": {\\\"value\\\": \\\"#108EE9\\\"}}, \\\"hover\\\": {\\\"fill\\\": {\\\"value\\\": \\\"#7EC2F3\\\"}}}}], \\\"scales\\\": [{\\\"name\\\": \\\"yscale\\\", \\\"type\\\": \\\"linear\\\", \\\"range\\\": \\\"height\\\", \\\"round\\\": true, \\\"nice\\\": true, \\\"domain\\\": {\\\"fields\\\": [{\\\"data\\\": \\\"counts\\\", \\\"field\\\": \\\"count\\\"}, {\\\"data\\\": \\\"nulls\\\", \\\"field\\\": \\\"count\\\"}]}}, {\\\"name\\\": \\\"xscale\\\", \\\"type\\\": \\\"linear\\\", \\\"range\\\": [{\\\"signal\\\": \\\"nullGap ? barStep + nullGap : 0\\\"}, {\\\"signal\\\": \\\"width\\\"}], \\\"round\\\": true, \\\"domain\\\": {\\\"signal\\\": \\\"[bins.start, bins.stop]\\\"}, \\\"bins\\\": {\\\"signal\\\": \\\"bins\\\"}}, {\\\"name\\\": \\\"xscale-null\\\", \\\"type\\\": \\\"band\\\", \\\"range\\\": [{\\\"signal\\\": \\\"nullGap ? 0 : 1\\\"}, {\\\"signal\\\": \\\"nullGap ? barStep : 0\\\"}], \\\"round\\\": true, \\\"domain\\\": [{\\\"signal\\\": \\\"nullGap ? null : &apos;&apos;\\\"}]}], \\\"axes\\\": [{\\\"title\\\": \\\"Values\\\", \\\"orient\\\": \\\"bottom\\\", \\\"scale\\\": \\\"xscale\\\", \\\"tickMinStep\\\": 1, \\\"grid\\\": true}, {\\\"orient\\\": \\\"bottom\\\", \\\"scale\\\": \\\"xscale-null\\\"}, {\\\"title\\\": \\\"Count\\\", \\\"orient\\\": \\\"left\\\", \\\"scale\\\": \\\"yscale\\\", \\\"tickCount\\\": 5, \\\"offset\\\": {\\\"signal\\\": \\\"nullGap ? 5 : 0\\\"}, \\\"grid\\\": true}], \\\"config\\\": {\\\"axis\\\": {\\\"gridColor\\\": \\\"rgba(204,204,204,1.0)\\\", \\\"labelFont\\\": \\\"\\\\\\\"San Francisco\\\\\\\", HelveticaNeue, Arial\\\", \\\"labelFontSize\\\": 12, \\\"labelPadding\\\": 10, \\\"labelColor\\\": \\\"rgba(0,0,0,0.847)\\\", \\\"tickColor\\\": \\\"rgb(136,136,136)\\\", \\\"titleFont\\\": \\\"\\\\\\\"San Francisco\\\\\\\", HelveticaNeue, Arial\\\", \\\"titleFontWeight\\\": \\\"normal\\\", \\\"titlePadding\\\": 20, \\\"titleFontSize\\\": 14, \\\"titleColor\\\": \\\"rgba(0,0,0,0.847)\\\"}, \\\"axisY\\\": {\\\"minExtent\\\": 30}, \\\"legend\\\": {\\\"labelFont\\\": \\\"\\\\\\\"San Francisco\\\\\\\", HelveticaNeue, Arial\\\", \\\"labelColor\\\": \\\"rgba(0,0,0,0.847)\\\", \\\"titleFont\\\": \\\"\\\\\\\"San Francisco\\\\\\\", HelveticaNeue, Arial\\\", \\\"cornerRadius\\\": 30, \\\"gradientLength\\\": 608, \\\"titleColor\\\": \\\"rgba(0,0,0,0.847)\\\"}, \\\"range\\\": {\\\"heatmap\\\": {\\\"scheme\\\": \\\"greenblue\\\"}}, \\\"style\\\": {\\\"rect\\\": {\\\"stroke\\\": \\\"rgba(200, 200, 200, 0.5)\\\"}, \\\"cell\\\": {\\\"stroke\\\": \\\"transparent\\\"}, \\\"group-title\\\": {\\\"fontSize\\\": 29, \\\"font\\\": \\\"HelveticaNeue, Arial\\\", \\\"fontWeight\\\": \\\"normal\\\", \\\"fill\\\": \\\"rgba(0,0,0,0.65)\\\"}}, \\\"title\\\": {\\\"color\\\": \\\"rgba(0,0,0,0.847)\\\", \\\"font\\\": \\\"\\\\\\\"San Francisco\\\\\\\", HelveticaNeue, Arial\\\", \\\"fontSize\\\": 18, \\\"fontWeight\\\": \\\"normal\\\", \\\"offset\\\": 30}}}\";                                 var vega_json_parsed = JSON.parse(vega_json);                                 var toolTipOpts = {                                     showAllFields: true                                 };                                 if(vega_json_parsed[\"metadata\"] != null){                                     if(vega_json_parsed[\"metadata\"][\"bubbleOpts\"] != null){                                         toolTipOpts = vega_json_parsed[\"metadata\"][\"bubbleOpts\"];                                     };                                 };                                 vegaEmbed(\"#vis\", vega_json_parsed).then(function (result) {                                     vegaTooltip.vega(result.view, toolTipOpts);                                  });                             </script>                         </body>                     </html>' src=\"demo_iframe_srcdoc.htm\">                         <p>Your browser does not support iframes.</p>                     </iframe>                 </body>             </html>"
+      ],
+      "text/plain": [
+       "<IPython.core.display.HTML object>"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "actions[actions['movieId']==750]['rating'].show()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 43,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2020-08-03T08:11:19.777657Z",
+     "start_time": "2020-08-03T08:11:19.766616Z"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "<bound method SFrame.column_names of Columns:\n",
+       "\tuserId\tint\n",
+       "\tmovieId\tint\n",
+       "\trating\tfloat\n",
+       "\ttimestamp\tint\n",
+       "\n",
+       "Rows: 20000263\n",
+       "\n",
+       "Data:\n",
+       "+--------+---------+--------+------------+\n",
+       "| userId | movieId | rating | timestamp  |\n",
+       "+--------+---------+--------+------------+\n",
+       "|   1    |    2    |  3.5   | 1112486027 |\n",
+       "|   1    |    29   |  3.5   | 1112484676 |\n",
+       "|   1    |    32   |  3.5   | 1112484819 |\n",
+       "|   1    |    47   |  3.5   | 1112484727 |\n",
+       "|   1    |    50   |  3.5   | 1112484580 |\n",
+       "|   1    |   112   |  3.5   | 1094785740 |\n",
+       "|   1    |   151   |  4.0   | 1094785734 |\n",
+       "|   1    |   223   |  4.0   | 1112485573 |\n",
+       "|   1    |   253   |  4.0   | 1112484940 |\n",
+       "|   1    |   260   |  4.0   | 1112484826 |\n",
+       "+--------+---------+--------+------------+\n",
+       "[20000263 rows x 4 columns]\n",
+       "Note: Only the head of the SFrame is printed.\n",
+       "You can use print_rows(num_rows=m, num_columns=n) to print more rows and columns.>"
+      ]
+     },
+     "execution_count": 43,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "items.column_names"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 44,
+   "metadata": {
+    "ExecuteTime": {
+     "end_time": "2020-08-03T08:12:43.653743Z",
+     "start_time": "2020-08-03T08:12:43.612249Z"
+    }
+   },
+   "outputs": [
+    {
+     "ename": "OSError",
+     "evalue": "No files corresponding to the specified path (/Users/sachin/Downloads/ml-20m/ratmovies.csv).",
+     "output_type": "error",
+     "traceback": [
+      "\u001b[0;31m---------------------------------------------------------------------------\u001b[0m",
+      "\u001b[0;31mOSError\u001b[0m                                   Traceback (most recent call last)",
+      "\u001b[0;32m~/opt/anaconda3/lib/python3.7/site-packages/turicreate/data_structures/sframe.py\u001b[0m in \u001b[0;36m_read_csv_impl\u001b[0;34m(cls, url, delimiter, header, error_bad_lines, comment_char, escape_char, double_quote, quote_char, skip_initial_space, column_type_hints, na_values, line_terminator, usecols, nrows, skiprows, verbose, store_errors, nrows_to_infer, true_values, false_values, _only_raw_string_substitutions, **kwargs)\u001b[0m\n\u001b[1;32m   1094\u001b[0m             \u001b[0;32mwith\u001b[0m \u001b[0mcython_context\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m-> 1095\u001b[0;31m                 \u001b[0merrors\u001b[0m \u001b[0;34m=\u001b[0m \u001b[0mproxy\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mload_from_csvs\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0minternal_url\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mparsing_config\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mtype_hints\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m   1096\u001b[0m         \u001b[0;32mexcept\u001b[0m \u001b[0mException\u001b[0m \u001b[0;32mas\u001b[0m \u001b[0me\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n",
+      "\u001b[0;32mcy_sframe.pyx\u001b[0m in \u001b[0;36mturicreate._cython.cy_sframe.UnitySFrameProxy.load_from_csvs\u001b[0;34m()\u001b[0m\n",
+      "\u001b[0;32mcy_sframe.pyx\u001b[0m in \u001b[0;36mturicreate._cython.cy_sframe.UnitySFrameProxy.load_from_csvs\u001b[0;34m()\u001b[0m\n",
+      "\u001b[0;31mOSError\u001b[0m: No files corresponding to the specified path (/Users/sachin/Downloads/ml-20m/ratmovies.csv).",
+      "\nDuring handling of the above exception, another exception occurred:\n",
+      "\u001b[0;31mOSError\u001b[0m                                   Traceback (most recent call last)",
+      "\u001b[0;32m<ipython-input-44-29164d6e648b>\u001b[0m in \u001b[0;36m<module>\u001b[0;34m\u001b[0m\n\u001b[0;32m----> 1\u001b[0;31m \u001b[0mactions\u001b[0m \u001b[0;34m=\u001b[0m \u001b[0mtc\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mSFrame\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mread_csv\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0;34m'/Users/sachin/Downloads/ml-20m/ratmovies.csv'\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m",
+      "\u001b[0;32m~/opt/anaconda3/lib/python3.7/site-packages/turicreate/data_structures/sframe.py\u001b[0m in \u001b[0;36mread_csv\u001b[0;34m(cls, url, delimiter, header, error_bad_lines, comment_char, escape_char, double_quote, quote_char, skip_initial_space, column_type_hints, na_values, line_terminator, usecols, nrows, skiprows, verbose, nrows_to_infer, true_values, false_values, _only_raw_string_substitutions, **kwargs)\u001b[0m\n\u001b[1;32m   1577\u001b[0m             \u001b[0mfalse_values\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0mfalse_values\u001b[0m\u001b[0;34m,\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m   1578\u001b[0m             \u001b[0m_only_raw_string_substitutions\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0m_only_raw_string_substitutions\u001b[0m\u001b[0;34m,\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m-> 1579\u001b[0;31m             \u001b[0;34m**\u001b[0m\u001b[0mkwargs\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m   1580\u001b[0m         )[0]\n\u001b[1;32m   1581\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n",
+      "\u001b[0;32m~/opt/anaconda3/lib/python3.7/site-packages/turicreate/data_structures/sframe.py\u001b[0m in \u001b[0;36m_read_csv_impl\u001b[0;34m(cls, url, delimiter, header, error_bad_lines, comment_char, escape_char, double_quote, quote_char, skip_initial_space, column_type_hints, na_values, line_terminator, usecols, nrows, skiprows, verbose, store_errors, nrows_to_infer, true_values, false_values, _only_raw_string_substitutions, **kwargs)\u001b[0m\n\u001b[1;32m   1003\u001b[0m                     \u001b[0mtrue_values\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0mtrue_values\u001b[0m\u001b[0;34m,\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m   1004\u001b[0m                     \u001b[0mfalse_values\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0mfalse_values\u001b[0m\u001b[0;34m,\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m-> 1005\u001b[0;31m                     \u001b[0m_only_raw_string_substitutions\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0m_only_raw_string_substitutions\u001b[0m\u001b[0;34m,\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m   1006\u001b[0m                 )\n\u001b[1;32m   1007\u001b[0m                 \u001b[0mcolumn_type_hints\u001b[0m \u001b[0;34m=\u001b[0m \u001b[0mSFrame\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0m_infer_column_types_from_lines\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mfirst_rows\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n",
+      "\u001b[0;32m~/opt/anaconda3/lib/python3.7/site-packages/turicreate/data_structures/sframe.py\u001b[0m in \u001b[0;36mread_csv\u001b[0;34m(cls, url, delimiter, header, error_bad_lines, comment_char, escape_char, double_quote, quote_char, skip_initial_space, column_type_hints, na_values, line_terminator, usecols, nrows, skiprows, verbose, nrows_to_infer, true_values, false_values, _only_raw_string_substitutions, **kwargs)\u001b[0m\n\u001b[1;32m   1577\u001b[0m             \u001b[0mfalse_values\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0mfalse_values\u001b[0m\u001b[0;34m,\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m   1578\u001b[0m             \u001b[0m_only_raw_string_substitutions\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0m_only_raw_string_substitutions\u001b[0m\u001b[0;34m,\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m-> 1579\u001b[0;31m             \u001b[0;34m**\u001b[0m\u001b[0mkwargs\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m   1580\u001b[0m         )[0]\n\u001b[1;32m   1581\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n",
+      "\u001b[0;32m~/opt/anaconda3/lib/python3.7/site-packages/turicreate/data_structures/sframe.py\u001b[0m in \u001b[0;36m_read_csv_impl\u001b[0;34m(cls, url, delimiter, header, error_bad_lines, comment_char, escape_char, double_quote, quote_char, skip_initial_space, column_type_hints, na_values, line_terminator, usecols, nrows, skiprows, verbose, store_errors, nrows_to_infer, true_values, false_values, _only_raw_string_substitutions, **kwargs)\u001b[0m\n\u001b[1;32m   1093\u001b[0m                 \u001b[0mglconnect\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mget_server\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mset_log_progress\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0;32mFalse\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m   1094\u001b[0m             \u001b[0;32mwith\u001b[0m \u001b[0mcython_context\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m-> 1095\u001b[0;31m                 \u001b[0merrors\u001b[0m \u001b[0;34m=\u001b[0m \u001b[0mproxy\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mload_from_csvs\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0minternal_url\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mparsing_config\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mtype_hints\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m   1096\u001b[0m         \u001b[0;32mexcept\u001b[0m \u001b[0mException\u001b[0m \u001b[0;32mas\u001b[0m \u001b[0me\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m   1097\u001b[0m             \u001b[0;32mif\u001b[0m \u001b[0mtype\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0me\u001b[0m\u001b[0;34m)\u001b[0m \u001b[0;34m==\u001b[0m \u001b[0mRuntimeError\u001b[0m \u001b[0;32mand\u001b[0m \u001b[0;34m\"CSV parsing cancelled\"\u001b[0m \u001b[0;32min\u001b[0m \u001b[0mstr\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0me\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0margs\u001b[0m\u001b[0;34m[\u001b[0m\u001b[0;36m0\u001b[0m\u001b[0;34m]\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n",
+      "\u001b[0;32m~/opt/anaconda3/lib/python3.7/site-packages/turicreate/_cython/context.py\u001b[0m in \u001b[0;36m__exit__\u001b[0;34m(self, exc_type, exc_value, traceback)\u001b[0m\n\u001b[1;32m     48\u001b[0m             \u001b[0;32mif\u001b[0m \u001b[0;32mnot\u001b[0m \u001b[0mself\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mshow_cython_trace\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m     49\u001b[0m                 \u001b[0;31m# To hide cython trace, we re-raise from here\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m---> 50\u001b[0;31m                 \u001b[0;32mraise\u001b[0m \u001b[0mexc_type\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mexc_value\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m     51\u001b[0m             \u001b[0;32melse\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m     52\u001b[0m                 \u001b[0;31m# To show the full trace, we do nothing and let exception propagate\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n",
+      "\u001b[0;31mOSError\u001b[0m: No files corresponding to the specified path (/Users/sachin/Downloads/ml-20m/ratmovies.csv)."
+     ]
+    }
+   ],
+   "source": [
+    "movies = tc.SFrame.read_csv('/Users/sachin/Downloads/ml-20m/movies.csv')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.2"
+  },
+  "latex_envs": {
+   "LaTeX_envs_menu_present": true,
+   "autoclose": false,
+   "autocomplete": true,
+   "bibliofile": "biblio.bib",
+   "cite_by": "apalike",
+   "current_citInitial": 1,
+   "eqLabelWithNumbers": true,
+   "eqNumInitial": 1,
+   "hotkeys": {
+    "equation": "Ctrl-E",
+    "itemize": "Ctrl-I"
+   },
+   "labels_anchors": false,
+   "latex_user_defs": false,
+   "report_style_numbering": false,
+   "user_envs_cfg": false
+  },
+  "toc": {
+   "base_numbering": 1,
+   "nav_menu": {},
+   "number_sections": true,
+   "sideBar": true,
+   "skip_h1_title": false,
+   "title_cell": "Table of Contents",
+   "title_sidebar": "Contents",
+   "toc_cell": false,
+   "toc_position": {},
+   "toc_section_display": true,
+   "toc_window_display": false
+  },
+  "varInspector": {
+   "cols": {
+    "lenName": 16,
+    "lenType": 16,
+    "lenVar": 40
+   },
+   "kernels_config": {
+    "python": {
+     "delete_cmd_postfix": "",
+     "delete_cmd_prefix": "del ",
+     "library": "var_list.py",
+     "varRefreshCmd": "print(var_dic_list())"
+    },
+    "r": {
+     "delete_cmd_postfix": ") ",
+     "delete_cmd_prefix": "rm(",
+     "library": "var_list.r",
+     "varRefreshCmd": "cat(var_dic_list()) "
+    }
+   },
+   "types_to_exclude": [
+    "module",
+    "function",
+    "builtin_function_or_method",
+    "instance",
+    "_Feature"
+   ],
+   "window_display": false
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}

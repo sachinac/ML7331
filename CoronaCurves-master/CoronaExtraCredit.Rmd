@@ -1,6 +1,6 @@
 ---
 title: "Corona Extra Credit"
-author: "Ikenna Nwaogu"
+author: "Sachin Chavan"
 date: "8/9/2020"
 output: html_document
 ---
@@ -42,7 +42,7 @@ DataUsing$date <- as.factor(DataUsing$date)
 
 
 ############################## Class Data ###################################
-Class = read.csv("~/Documents/datascience/DS7331/CoronaCurves-master/Corona_Curves_TX_NY_NJ.csv", header = TRUE)
+Class = read.csv("Corona_Curves_TX_NY_NJ.csv", header = TRUE)
 #Class <- Class[rev(order(as.Date(Class$Date, format="%m/%d/%Y"))),]
 #Class %>% select(State,Date,Daily_New_Cases)
 
@@ -56,7 +56,7 @@ Class <- rbind(nj, ny, tx)
 
 
 ####### Future texas Data  ########
-FutureData = read.csv("~/Documents/datascience/DS7331/CoronaCurves-master/Corona_MAE.csv", header = TRUE)
+FutureData = read.csv("Corona_MAE.csv", header = TRUE)
 texasPos = FutureData$TX.New.Cases
 lenPos = length(texasPos)
 ########################################### Combine latest Texas data ##########################
